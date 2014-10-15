@@ -41,8 +41,8 @@ EOT
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 # ------------------------------------------------------------------------------
 
-# Comment out the code below to prevent script from existing on error
-set -e
+# Uncomment out the code below to make the script break on error
+# set -e
 #
 # Functions and Definitions
 #
@@ -63,7 +63,7 @@ REVERSE=$(tput smso)
 UNDERLINE=$(tput smul)
 function headerBlock {
 	l=${#1}
-	printf "${BLUE}%s\n%s\n%s\n" "--${1//?/-}--" "- $1 -" "--${1//?/-}--${NORMAL}"
+	printf "${BLUE}%s\n%s\n%s\n" "--${1//?/-}--" "${GREEN}- $1 -${BLUE}" "--${1//?/-}--${NORMAL}"
 }
 function givemeayes {
 	echo -n "$1 "
