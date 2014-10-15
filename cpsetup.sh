@@ -63,14 +63,14 @@ REVERSE=$(tput smso)
 UNDERLINE=$(tput smul)
 function headerBlock {
 	l=${#1}
-	printf "${BLUE}%s\n%s\n%s\n" "--${1//?/-}--" "- $1 -" "--${1//?/-}--"
+	printf "${BLUE}%s\n%s\n%s\n" "--${1//?/-}--" "- $1 -" "--${1//?/-}--${NORMAL}"
 }
 function givemeayes {
 	echo -n "$1 "
 	read answer
 	    case "$answer" in
 	    Y|y|yes|YES|Yes) return 0 ;;
-	    *) echo -e "\n${RED}Captain, we hit the eject button!\n"; exit ;;
+	    *) echo -e "\n${RED}Captain, we hit the eject button!\n${NORMAL}"; exit ;;
 	    esac
 }
 #
@@ -81,23 +81,23 @@ cpSetup_banner
 givemeayes "Would you like to continue with the install? (y/n)"
 yum clean all
 headerBlock "Adding yum colors if does not exist..."
-if [ ! grep -q "color_list_installed_older" "/etc/yum.conf" ]; then
-	echo "color_list_installed_older=red" >> /etc/yum.conf
+if ! grep -q 'color_list_installed_older' /etc/yum.conf ; then
+	echo 'color_list_installed_older=red' >> /etc/yum.conf
 fi
-if [ ! grep -q "color_list_installed_newer" "/etc/yum.conf" ]; then
-	echo "color_list_installed_newer=yellow" >> /etc/yum.conf
+if ! grep -q 'color_list_installed_newer' /etc/yum.conf ; then
+	echo 'color_list_installed_newer=yellow' >> /etc/yum.conf
 fi
-if [ ! grep -q "color_list_installed_extra" "/etc/yum.conf" ]; then
-	echo "color_list_installed_extra=red" >> /etc/yum.conf
+if ! grep -q 'color_list_installed_extra' /etc/yum.conf ; then
+	echo 'color_list_installed_extra=red' >> /etc/yum.conf
 fi
-if [ ! grep -q "color_list_available_reinstall" "/etc/yum.conf" ]; then
-	echo "color_list_available_reinstall=green" >> /etc/yum.conf
+if ! grep -q 'color_list_available_reinstall' /etc/yum.conf ; then
+	echo 'color_list_available_reinstall=green' >> /etc/yum.conf
 fi
-if [ ! grep -q "color_list_available_upgrade" "/etc/yum.conf" ]; then
-	echo "color_list_available_upgrade=blue" >> /etc/yum.conf
+if ! grep -q 'color_list_available_upgrade' /etc/yum.conf ; then
+	echo 'color_list_available_upgrade=blue' >> /etc/yum.conf
 fi
-if [ ! grep -q "color_list_available_install" "/etc/yum.conf" ]; then
-	echo "color_list_available_install=cyan" >> /etc/yum.conf
+if ! grep -q 'color_list_available_install' /etc/yum.conf ; then
+	echo 'color_list_available_install=cyan' >> /etc/yum.conf
 fi
 headerBlock "Updating all system packages..."
 yum update -y
