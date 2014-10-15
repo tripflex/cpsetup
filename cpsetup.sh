@@ -43,25 +43,64 @@ EOT
 
 # Comment out the code below to prevent script from existing on error
 set -e
-
+#
+# Functions and Definitions
+#
+BLACK=$(tput setaf 0)
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+LIME_YELLOW=$(tput setaf 190)
+POWDER_BLUE=$(tput setaf 153)
+BLUE=$(tput setaf 4)
+MAGENTA=$(tput setaf 5)
+CYAN=$(tput setaf 6)
+WHITE=$(tput setaf 7)
+BRIGHT=$(tput bold)
+NORMAL=$(tput sgr0)
+BLINK=$(tput blink)
+REVERSE=$(tput smso)
+UNDERLINE=$(tput smul)
 function headerBlock {
 	l=${#1}
-	printf "%s\n%s\n%s\n" "--${1//?/-}--" "- $1 -" "--${1//?/-}--"
+	printf "${BLUE}%s\n%s\n%s\n" "--${1//?/-}--" "- $1 -" "--${1//?/-}--"
 }
 function givemeayes {
 	echo -n "$1 "
 	read answer
 	    case "$answer" in
 	    Y|y|yes|YES|Yes) return 0 ;;
-	    *) echo -e "\nCaptain, we hit the eject button!\n"; exit ;;
+	    *) echo -e "\n${RED}Captain, we hit the eject button!\n"; exit ;;
 	    esac
 }
+#
+# Start of script
+#
 clear
 cpSetup_banner
 givemeayes "Would you like to continue with the install? (y/n)"
 yum clean all
+headerBlock "Adding yum colors if does not exist..."
+if [ ! grep -q "color_list_installed_older" "/etc/yum.conf" ]; then
+	echo "color_list_installed_older=red" >> /etc/yum.conf
+fi
+if [ ! grep -q "color_list_installed_newer" "/etc/yum.conf" ]; then
+	echo "color_list_installed_newer=yellow" >> /etc/yum.conf
+fi
+if [ ! grep -q "color_list_installed_extra" "/etc/yum.conf" ]; then
+	echo "color_list_installed_extra=red" >> /etc/yum.conf
+fi
+if [ ! grep -q "color_list_available_reinstall" "/etc/yum.conf" ]; then
+	echo "color_list_available_reinstall=green" >> /etc/yum.conf
+fi
+if [ ! grep -q "color_list_available_upgrade" "/etc/yum.conf" ]; then
+	echo "color_list_available_upgrade=blue" >> /etc/yum.conf
+fi
+if [ ! grep -q "color_list_available_install" "/etc/yum.conf" ]; then
+	echo "color_list_available_install=cyan" >> /etc/yum.conf
+fi
 headerBlock "Updating all system packages..."
-yum update -y -q
+yum update -y
 cd ~
 # --------------------------------------
 # Start of Custom ClamAV Install
