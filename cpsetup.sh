@@ -113,6 +113,7 @@ mkdir /usr/local/share/clamav
 chown clamav:clamav /usr/local/share/clamav
 wget --no-check-certificate https://github.com/vrtadmin/clamav-devel/archive/clamav-0.98.4.tar.gz
 tar -xzf clamav-*
+rm -rf clamav-*.tar.gz
 cd clamav*
 headerBlock "Building ClamAV from source..."
 ./configure --disable-zlib-vcheck
