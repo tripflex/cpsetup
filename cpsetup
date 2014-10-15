@@ -123,6 +123,10 @@ function headerBlock {
 	printf "${BLUE}%s\n%s\n%s\n" "--${1//?/-}--" "${GREEN}- $1 -${BLUE}" "--${1//?/-}--${NORMAL}"
 }
 
+function lineBreak {
+	echo -e "${MAGENTA} ========================================================================= ${NORMAL}"
+}
+
 function givemeayes {
 	echo -n "$1 (Y/N)"
 	read answer
@@ -138,6 +142,7 @@ function stepcheck {
 	fi
 
 	step=$1
+	lineBreak
 	if givemeayes "${BRIGHT}Would you like to ${step} ?${NORMAL}"; then
 		return 0;
 	else
