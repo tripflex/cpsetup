@@ -62,7 +62,7 @@ function help(){
 verbose="--quiet";
 version=0;
 unattended=0;
-builddir="~/cpsetupbuild/";
+builddir=~/cpsetupbuild/
 
 # Execute getopt
 ARGS=$(getopt -o "hvVu" -l "help,verbose,version,unattended" -n "cpsetup" -- "$@");
@@ -222,18 +222,18 @@ function installMailManage(){
 }
 
 function installMailQueue(){
-	cd "${builddir}"
+	cd $builddir
 	wget http://download.configserver.com/cmq.tgz
 	tar -xzf cmq.tgz
-	cd ~/cmq
+	cd cmq
 	sh install.sh
 }
 
 function installFirewall(){
-	cd "${builddir}"
+	cd $builddir
 	wget http://www.configserver.com/free/csf.tgz
 	tar -xzf csf.tgz
-	cd ~/csf
+	cd csf
 	sh install.sh
 	# Statistical Graphs available from the csf UI
 	yum install perl-GDGraph
@@ -242,13 +242,12 @@ function installFirewall(){
 }
 
 function installMalDetect(){
-	cd "${builddir}"
+	cd $builddir
 	wget --no-check-certificate https://www.rfxn.com/downloads/maldetect-current.tar.gz
 	tar -xzf maldetect-*.tar.gz
 	rm -rf maldetect-*.tar.gz
 	cd maldetect*
 	sh install.sh
-	rm -rf maldetect*
 }
 
 function hardenServerConfig(){
@@ -266,11 +265,11 @@ if ! givemeayes "${RED}Would you like to continue with the install?${NORMAL}"; t
 	exit;
 fi
 
-if [ -d "${builddir}" ]; then
-	rm -rf "${builddir}"
+if [ -d "$builddir" ]; then
+	rm -rf $builddir
 fi
 
-mkdir "${builddir}"
+mkdir $builddir
 
 if stepcheck "install yum colors"; then
 	headerBlock "Adding yum colors if does not exist..."
@@ -310,5 +309,5 @@ fi
 
 headerBlock "Cleaning up build files, please wait..."
 cd ~
-rm -rf "${builddir}"
+rm -rf $builddir
 echo -e "\n${CYAN}Script Complete! Profit!\n${NORMAL}"
