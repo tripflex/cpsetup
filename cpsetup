@@ -132,6 +132,10 @@ function givemeayes {
 }
 
 function stepcheck {
+	if (($unattended > 0)); then
+		return 0;
+	fi
+
 	step=$1
 	if givemeayes "${BRIGHT}Would you like to ${step} ?${NORMAL}"; then
 		return 0;
@@ -300,3 +304,5 @@ if stepcheck "harden server configuration"; then
 	headerBlock "Securing the server with configuration tweaks, please wait..."
 	hardenServerConfig
 fi
+
+echo -e "\n${CYAN}Script Complete! Profit!\n${NORMAL}"
