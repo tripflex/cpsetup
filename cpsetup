@@ -62,7 +62,7 @@ function help(){
 verbose="--quiet";
 version=0;
 unattended=0;
-builddir="~/cpsetup";
+builddir="~/cpsetupbuild/";
 
 # Execute getopt
 ARGS=$(getopt -o "hvVu" -l "help,verbose,version,unattended" -n "cpsetup" -- "$@");
@@ -308,4 +308,7 @@ if stepcheck "harden server configuration"; then
 	hardenServerConfig
 fi
 
+headerBlock "Cleaning up build files, please wait..."
+cd ~
+rm -rf "${builddir}"
 echo -e "\n${CYAN}Script Complete! Profit!\n${NORMAL}"
