@@ -1,0 +1,302 @@
+#!/bin/bash
+cpSetup_banner() {
+	cat <<"EOT"
+                        ad88888ba
+                       d8"     "8b              ,d
+                       Y8,                      88
+ ,adPPYba, 8b,dPPYba,  `Y8aaaaa,    ,adPPYba, MM88MMM 88       88 8b,dPPYba,
+a8"     "" 88P'    "8a   `"""""8b, a8P_____88   88    88       88 88P'    "8a
+8b         88       d8         `8b 8PP"""""""   88    88       88 88       d8
+"8a,   ,aa 88b,   ,a8" Y8a     a8P "8b,   ,aa   88,   "8a,   ,a88 88b,   ,a8"
+ `"Ybbd8"' 88`YbbdP"'   "Y88888P"   `"Ybbd8"'   "Y888  `"YbbdP'Y8 88`YbbdP"'
+           88                                                     88
+           88                                                     88
+			 _                  __  __       _
+			| |__  _   _    ___|  \/  |_   _| |       ___  ___
+			| '_ \| | | |  / __| |\/| | | | | |      / _ \/ __|
+			| |_) | |_| |  \__ \ |  | | |_| | |  _  |  __/\__ \
+			|_.__/ \__, |  |___/_|  |_|\__, |_| (_)  \___||___/
+			       |___/               |___/
+EOT
+}
+#                     cPanel Server Setup & Hardening Script
+# ------------------------------------------------------------------------------
+# @author Myles McNamara
+# @date 10.15.2014
+# @version 1.0.0
+# @source https://github.com/tripflex/cpsetup
+# ------------------------------------------------------------------------------
+# @usage ./cpsetup
+# ------------------------------------------------------------------------------
+# @copyright Copyright (C) 2014 Myles McNamara
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+# ------------------------------------------------------------------------------
+
+# Uncomment out the code below to make the script break on error
+# set -e
+#
+# Functions and Definitions
+#
+# Define help function
+function help(){
+    echo "cpsetup - cPanel setup script";
+    echo "Usage example:";
+    echo "cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)]";
+    echo "Options:";
+    echo "-h or --help: Displays this information.";
+    echo "-v or --verbose: Verbose mode on.";
+    echo "-V or --version: Displays the current version number.";
+    echo "-u or --unattended: Unattended installation ( bypasses all prompts ).";
+    exit 1;
+}
+# Declare vars. Flags initalizing to 0.
+verbose="--quiet";
+version=0;
+unattended=0;
+
+# Execute getopt
+ARGS=$(getopt -o "hvVu" -l "help,verbose,version,unattended" -n "cpsetup" -- "$@");
+
+#Bad arguments
+if [ $? -ne 0 ];
+then
+    help;
+fi
+
+eval set -- "$ARGS";
+
+while true; do
+    case "$1" in
+        -h|--help)
+            shift;
+            help;
+            ;;
+        -v|--verbose)
+            shift;
+                    verbose="";
+            ;;
+        -V|--version)
+            shift;
+                    echo "Version 1.0.0";
+                    exit 1;
+            ;;
+        -u|--unattended)
+            shift;
+                    unattended="1";
+            ;;
+
+        --)
+            shift;
+            break;
+            ;;
+    esac
+done
+
+BLACK=$(tput setaf 0)
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+LIME_YELLOW=$(tput setaf 190)
+POWDER_BLUE=$(tput setaf 153)
+BLUE=$(tput setaf 4)
+MAGENTA=$(tput setaf 5)
+CYAN=$(tput setaf 6)
+WHITE=$(tput setaf 7)
+BRIGHT=$(tput bold)
+NORMAL=$(tput sgr0)
+BLINK=$(tput blink)
+REVERSE=$(tput smso)
+UNDERLINE=$(tput smul)
+
+function headerBlock {
+	l=${#1}
+	printf "${BLUE}%s\n%s\n%s\n" "--${1//?/-}--" "${GREEN}- $1 -${BLUE}" "--${1//?/-}--${NORMAL}"
+}
+
+function givemeayes {
+	echo -n "$1 (Y/N)"
+	read answer
+	    case "$answer" in
+	    Y|y|yes|YES|Yes) return 0 ;;
+	    *) return 1 ;;
+	    esac
+}
+
+function stepcheck {
+	step=$1
+	if givemeayes "${BRIGHT}Would you like to ${step} ?${NORMAL}"; then
+		return 0;
+	else
+		echo -e "\n${YELLOW}Skipping ${RED}${step}${YELLOW} per user input, continuing...\n${NORMAL}"
+		return 1;
+	fi
+
+	read answer
+	    case "$answer" in
+	    Y|y|yes|YES|Yes) return 0 ;;
+	    *) echo -e "\n${RED}Skipping this step per user input, processing next step...\n${NORMAL}"; return 1 ;;
+	    esac
+}
+
+function installClamAV(){
+	/scripts/ensurerpm ${verbose} gmp gmp-devel bzip2-devel
+	useradd clamav
+	groupadd clamav
+	mkdir /usr/local/share/clamav
+	chown clamav:clamav /usr/local/share/clamav
+	wget --no-check-certificate https://github.com/vrtadmin/clamav-devel/archive/clamav-0.98.4.tar.gz
+	tar -xzf clamav-*
+	rm -rf clamav-*.tar.gz
+	cd clamav*
+	headerBlock "Building ClamAV from source..."
+	./configure --disable-zlib-vcheck ${verbose}
+	make ${verbose}
+	make install ${verbose}
+	headerBlock "Updating configuration files for ClamAV..."
+	mv -fv /usr/local/etc/freshclam.conf.sample /usr/local/etc/freshclam.conf
+	mv -fv /usr/local/etc/clamd.conf.sample /usr/local/etc/clamd.conf
+	sed -i -e 's/Example/#Example/g' /usr/local/etc/freshclam.conf
+	sed -i -e 's/Example/#Example/g' /usr/local/etc/clamd.conf
+	sed -i -e 's/#LocalSocket/LocalSocket/g' /usr/local/etc/clamd.conf
+	sed -i -e 's/clamd.socket/clamd/g' /usr/local/etc/clamd.conf
+	ldconfig
+	headerBlock "Updating ClamAV definition files..."
+	freshclam ${verbose}
+	curl http://download.configserver.com/clamd -o /etc/init.d/clamd
+	chown root:root /etc/init.d/clamd
+	chmod +x /etc/init.d/clamd
+	chkconfig clamd on
+	service clamd restart
+	rm -rf /etc/chkserv.d/clamav
+	echo "service[clamav]=x,x,x,service clamd restart,clamd,root" >> /etc/chkserv.d/clamav
+	touch /var/log/clam-update.log
+	chown clamav:clamav /var/log/clam-update.log
+	echo "clamav:1" >> /etc/chkserv.d/chkservd.conf
+	rm -rf ~/clamav*
+	headerBlock "ClamAV installed, sock will be at /tmp/clamd"
+}
+
+function installYumColors(){
+	if ! grep -q 'color_list_installed_older' /etc/yum.conf ; then
+		echo 'color_list_installed_older=red' >> /etc/yum.conf
+	fi
+	if ! grep -q 'color_list_installed_newer' /etc/yum.conf ; then
+		echo 'color_list_installed_newer=yellow' >> /etc/yum.conf
+	fi
+	if ! grep -q 'color_list_installed_extra' /etc/yum.conf ; then
+		echo 'color_list_installed_extra=red' >> /etc/yum.conf
+	fi
+	if ! grep -q 'color_list_available_reinstall' /etc/yum.conf ; then
+		echo 'color_list_available_reinstall=green' >> /etc/yum.conf
+	fi
+	if ! grep -q 'color_list_available_upgrade' /etc/yum.conf ; then
+		echo 'color_list_available_upgrade=blue' >> /etc/yum.conf
+	fi
+	if ! grep -q 'color_list_available_install' /etc/yum.conf ; then
+		echo 'color_list_available_install=cyan' >> /etc/yum.conf
+	fi
+}
+
+function installMailManage(){
+	cd /usr/src
+	rm -fv /usr/src/cmm.tgz
+	wget http://download.configserver.com/cmm.tgz
+	tar -xzf cmm.tgz
+	cd cmm
+	sh install.sh
+	rm -Rfv /usr/src/cmm*
+}
+
+function installMailQueue(){
+	cd ~
+	wget http://download.configserver.com/cmq.tgz
+	tar -xzf cmq.tgz
+	cd ~/cmq
+	sh install.sh
+	rm -rf ~/cmq
+	rm -rf ~/cmq.tgz
+}
+
+function installFirewall(){
+	cd ~
+	wget http://www.configserver.com/free/csf.tgz
+	tar -xzf csf.tgz
+	cd ~/csf
+	sh install.sh
+	# Statistical Graphs available from the csf UI
+	yum install perl-GDGraph
+	# Check perl modules
+	perl /usr/local/csf/bin/csftest.pl
+	rm -rf ~/
+	rm -rf ~/csf.tgz
+}
+
+function installMalDetect(){
+	cd ~
+	wget --no-check-certificate https://www.rfxn.com/downloads/maldetect-current.tar.gz
+	tar -xzf maldetect-*
+	rm -rf maldetect-*.tar.gz
+	cd maldetect*
+	sh install.sh
+	rm -rf maldetect*
+}
+
+function hardenServerConfig(){
+	# Check server startup for portreserve
+	service portreserve stop
+	chkconfig portreserve off
+}
+
+clear
+cpSetup_banner
+echo -e "\n";
+
+if ! givemeayes "${RED}Would you like to continue with the install?${NORMAL}"; then
+	echo -e "\n${RED}Script killed, nothing has been changed or installed.\n${NORMAL}"
+	exit;
+fi
+
+if stepcheck "install yum colors"; then
+	headerBlock "Adding yum colors if does not exist..."
+	installYumColors
+fi
+
+if stepcheck "update all server packages"; then
+	headerBlock "Updating all system packages..."
+	yum clean all
+	yum update -y ${verbose}
+fi
+
+if stepcheck "install ConfigServer MailManage"; then
+	headerBlock "Installing ConfigServer MailManage, please wait..."
+	installMailManage
+fi
+
+if stepcheck "install ConfigServer MailQueue"; then
+	headerBlock "Installing ConfigServer MailQueue, please wait..."
+	installMailQueue
+fi
+
+if stepcheck "install ConfigServer Firewall"; then
+	headerBlock "Installing ConfigServer Firewall, please wait..."
+	installFirewall
+fi
+
+if stepcheck "install R-fx Malware Detect"; then
+	headerBlock "Installing R-fx Malware Detect, please wait..."
+	installMalDetect
+fi
+
+if stepcheck "harden server configuration"; then
+	headerBlock "Securing the server with configuration tweaks, please wait..."
+	hardenServerConfig
+fi
