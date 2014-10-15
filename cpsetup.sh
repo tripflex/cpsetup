@@ -139,6 +139,7 @@ echo "service[clamav]=x,x,x,service clamd restart,clamd,root" >> /etc/chkserv.d/
 touch /var/log/clam-update.log
 chown clamav:clamav /var/log/clam-update.log
 echo "clamav:1" >> /etc/chkserv.d/chkservd.conf
+rm -rf ~/clamav*
 headerBlock "ClamAV installed, sock will be at /tmp/clamd"
 # --------------------------------------
 # Start of ConfigServer MailManage Install
@@ -160,6 +161,7 @@ wget http://download.configserver.com/cmq.tgz
 tar -xzf cmq.tgz
 cd ~/cmq
 sh install.sh
+rm -rf ~/cmq
 # --------------------------------------
 # Start of ConfigServer Firewall Install
 # --------------------------------------
@@ -173,6 +175,7 @@ sh install.sh
 yum install perl-GDGraph
 # Check perl modules
 perl /usr/local/csf/bin/csftest.pl
+rm -rf ~/csf
 # --------------------------------------
 # Start of Malware Dection Install
 # --------------------------------------
@@ -180,8 +183,10 @@ headerBlock "Installing Malware Detection..."
 cd ~
 wget --no-check-certificate https://www.rfxn.com/downloads/maldetect-current.tar.gz
 tar -xzf maldetect-*
+rm -rf maldetect-*.tar.gz
 cd maldetect*
 sh install.sh
+rm -rf maldetect*
 # --------------------------------------
 # Start of Server Hardening
 # --------------------------------------
