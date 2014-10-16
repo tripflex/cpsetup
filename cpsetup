@@ -124,7 +124,7 @@ function headerBlock {
 }
 
 function lineBreak {
-	echo -e "${MAGENTA} ========================================================================= ${NORMAL}"
+	echo -e "${MAGENTA}-=========================================================================-${NORMAL}"
 }
 
 function givemeayes {
@@ -264,7 +264,9 @@ function hardenServerConfig(){
 clear
 cpSetup_banner
 echo -e "\n";
-
+if (($unattended > 0)); then
+	echo -e "${YELLOW}!!! WARNING: Unattended mode ENABLED, you will not be prompted for each install/configuration !!!${NORMAL}"
+fi
 if ! givemeayes "${RED}Would you like to continue with the install?${NORMAL}"; then
 	echo -e "\n${RED}Script killed, nothing has been changed or installed.\n${NORMAL}"
 	exit;
