@@ -263,6 +263,17 @@ function hardenServerConfig(){
 	# Check server startup for portreserve
 	service portreserve stop
 	chkconfig portreserve off
+
+	configureCSF
+	configureSSH
+	configurecPanel
+	configurePureFTP
+	configureTweakSettings
+	configureMySQL
+	configurePHP
+	csf -r
+	/etc/init.d/lfd restart
+	/etc/init.d/httpd restart
 }
 
 function configureCSF(){
