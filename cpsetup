@@ -60,9 +60,12 @@ function help(){
 }
 # Declare vars. Flags initalizing to 0.
 verbose="--quiet";
+yumargs="";
 version=0;
 unattended=0;
 builddir=~/cpsetupbuild/
+sshport=222;
+rootemail="your@email.com";
 
 # Execute getopt
 ARGS=$(getopt -o "hvVu" -l "help,verbose,version,unattended" -n "cpsetup" -- "$@");
@@ -93,6 +96,7 @@ while true; do
         -u|--unattended)
             shift;
                     unattended="1";
+                    yumargs="-y";
             ;;
 
         --)
@@ -241,7 +245,7 @@ function installFirewall(){
 	cd csf
 	sh install.sh
 	# Statistical Graphs available from the csf UI
-	yum install perl-GDGraph
+	yum install ${yumargs} perl-GDGraph
 	# Check perl modules
 	perl /usr/local/csf/bin/csftest.pl
 }
@@ -259,6 +263,48 @@ function hardenServerConfig(){
 	# Check server startup for portreserve
 	service portreserve stop
 	chkconfig portreserve off
+}
+
+function configureCSF(){
+	if ! grep -q 'color_list_installed_older' /etc/yum.conf ; then
+		echo 'color_list_installed_older=red' >> /etc/yum.conf
+	fi
+}
+
+function configureSSH(){
+	sed -i -e 's/#Port 22/Port ${sshport}/g' /etc/ssh/sshd_config
+	sed -i -e 's/#UseDNS yes/UseDNS no/g' /etc/ssh/sshd_config
+}
+
+function configurecPanel(){
+	# Enable Shell Fork Bomb Protection
+	perl -I/usr/local/cpanel -MCpanel::LoginProfile -le 'print [Cpanel::LoginProfile::install_profile('limits')]->[1];'
+	# Compiler access
+	chmod 750 /usr/bin/gcc
+
+}
+
+function configurePureFTP(){
+	sed -i -e "s/RootPassLogins: 'yes'/RootPassLogins: 'no'/g" /var/cpanel/conf/pureftpd/main
+	sed -i -e "s/AnonymousCantUpload: 'no'/AnonymousCantUpload: 'yes'/g" /var/cpanel/conf/pureftpd/main
+	sed -i -e "s/NoAnonymous: 'no'/NoAnonymous: 'yes'/g" /var/cpanel/conf/pureftpd/main
+	# Build configuration from cPanel FTP config
+	/usr/local/cpanel/whostmgr/bin/whostmgr2 doftpconfiguration > /dev/null
+}
+
+function configureTweakSettings(){
+	sed -i -e 's/skipboxtrapper=0/skipboxtrapper=1/g' /var/cpanel/cpanel.config
+	sed -i -e 's/referrerblanksafety=0/referrerblanksafety=1/g' /var/cpanel/cpanel.config
+	sed -i -e 's/referrersafety=0/referrersafety=1/g' /var/cpanel/cpanel.config
+	sed -i -e 's/cgihidepass=0/cgihidepass=1/g' /var/cpanel/cpanel.config
+	echo "maxemailsperhour=199" >> /var/cpanel/cpanel.config
+	# Must be ran after updating tweak settings file
+	/usr/local/cpanel/whostmgr/bin/whostmgr2 --updatetweaksettings
+}
+
+function configurePHP(){
+	sed -i -e 's/enable_dl = On/enable_dl = Off/g' /usr/local/lib/php.ini
+	sed -i -e 's/disable_functions =/disable_functions = show_source, system, shell_exec, passthru, exec, phpinfo, popen, proc_open, allow_url_fopen, ini_set/g' /usr/local/lib/php.ini
 }
 
 clear
@@ -284,9 +330,9 @@ if stepcheck "install yum colors"; then
 fi
 
 if stepcheck "update all server packages"; then
-	headerBlock "Updating all system packages..."
-	yum clean all
-	yum update -y ${verbose}
+	headerBlock "Updating all system packages, please wait this may take a minute..."
+	yum clean all ${verbose}
+	yum update ${yumargs} ${verbose}
 fi
 
 if stepcheck "install ConfigServer MailManage"; then
