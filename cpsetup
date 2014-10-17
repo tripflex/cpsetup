@@ -26,7 +26,7 @@ EOT
 # @version 1.0.0
 # @source https://github.com/tripflex/cpsetup
 # ------------------------------------------------------------------------------
-# @usage ./cpsetup
+# @usage ./cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)]
 # ------------------------------------------------------------------------------
 # @copyright Copyright (C) 2014 Myles McNamara
 # This program is free software: you can redistribute it and/or modify
