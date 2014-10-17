@@ -316,7 +316,7 @@ function configureTweakSettings(){
 	sed -i -e 's/cgihidepass=0/cgihidepass=1/g' /var/cpanel/cpanel.config
 	echo "maxemailsperhour=199" >> /var/cpanel/cpanel.config
 	# Must be ran after updating tweak settings file
-	/usr/local/cpanel/whostmgr/bin/whostmgr2 --updatetweaksettings
+	/usr/local/cpanel/whostmgr/bin/whostmgr2 --updatetweaksettings > /dev/null
 }
 
 function configureMySQL(){
