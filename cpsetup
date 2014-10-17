@@ -326,6 +326,7 @@ echo -e "\n";
 if (($unattended > 0)); then
 	echo -e "${YELLOW}!!! WARNING: Unattended mode ENABLED, you will not be prompted for each install/configuration !!!${NORMAL}"
 fi
+
 if ! givemeayes "${RED}Would you like to continue with the install?${NORMAL}"; then
 	echo -e "\n${RED}Script killed, nothing has been changed or installed.\n${NORMAL}"
 	exit;
@@ -336,6 +337,22 @@ if [ -d "$builddir" ]; then
 fi
 
 mkdir $builddir
+
+# Configuration Prompts ( only shown when -u is NOT specified )
+if (($unattended < 1)); then
+	echo -n "${MAGENTA}Enter SSH port to change from ${BLUE}${sshport}${MAGENTA}:${NORMAL} "
+	read customsshport
+	if [ $customsshport ]; then
+		sshport=customsshport
+	fi
+
+	echo -n "${MAGENTA}Enter root forwarding email to change from ${BLUE}${rootemail}${MAGENTA}:${NORMAL} "
+	read customrootemail
+	if [ $customrootemail ]; then
+		rootemail=customrootemail
+	fi
+
+fi
 
 if stepcheck "install yum colors"; then
 	headerBlock "Adding yum colors if does not exist..."
