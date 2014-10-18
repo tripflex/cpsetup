@@ -22,6 +22,17 @@ cpsetup
 <li>Update MySQL Settings</li>
 <li>Update PHP Settings</li>
 </ul>
+<h4>Future Enhancements:</h4>
+<ul>
+<li>Update Apache Global Configuration</li>
+<li>Update EasyApache conf and Rebuild</li>
+<li>Install <a href="https://www.ndchost.com/cpanel-whm/addons/accountdnscheck/" target="_blank">Account DNS Check</a></li>
+<li>Install <a href="https://waf.comodo.com/" target="_blank">Comodo WAF</a></li>
+<li>Install <a href="http://www.softaculous.com/" target="_blank">Softaculous</a></li>
+<li>Install <a href="https://www.ndchost.com/cpanel-whm/addons/watchmysql/" target="_blank">WatchMySQL</a></li>
+<li>Install <a href="http://how2.be/en/community/phpinimgr/" target="_blank">PHP.ini Manager</a></li>
+<li>Install <a href="https://www.ndchost.com/cpanel-whm/addons/cleanbackups/" target="_blank">Clean Backups</a></li>
+</ul>
 </td>
 <td width="40%">
 <p align="center"><img src="screenshot.png"></p>
