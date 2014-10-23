@@ -123,3 +123,7 @@ Option | Original Value | New Value
 --- | --- | ---
 enable_dl | On | Off
 disable_functions | None | show_source, system, shell_exec, passthru, exec, phpinfo, popen, proc_open, allow_url_fopen, ini_set
+
+
+### Caution
+Use at your own risk, if you don't know what you're doing you should probably not be using this script.  Myself and any contributors to this project take absolutely no responsibility for anything you do with this script. I **strongly** recommend reading the script so you understand what it does before using.
