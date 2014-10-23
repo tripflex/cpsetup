@@ -286,8 +286,9 @@ function configureCSF(){
 }
 
 function configureSSH(){
-	sed -i -e 's/#Port 22/Port ${sshport}/g' /etc/ssh/sshd_config
+	sed -i -e "s/#Port 22/Port ${sshport}/g" /etc/ssh/sshd_config
 	sed -i -e 's/#UseDNS yes/UseDNS no/g' /etc/ssh/sshd_config
+	/etc/init.d/sshd restart
 }
 
 function configurecPanel(){
