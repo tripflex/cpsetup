@@ -1,9 +1,9 @@
 cpsetup
 =======
 
-Author: Myles McNamara
-Version: 1.1.0
-Last Update: November 27, 2014
+<strong>Author:</strong> Myles McNamara<br/>
+<strong>Version:</strong> 1.1.0<br/>
+<strong>Last Update:</strong> November 27, 2014
 
 <table border="0">
 <tr>
@@ -22,6 +22,7 @@ Last Update: November 27, 2014
 <li>Install <a href="https://www.ndchost.com/cpanel-whm/addons/watchmysql/" target="_blank">WatchMySQL</a></li>
 <li>Install <a href="http://how2.be/en/community/phpinimgr/" target="_blank">PHP.ini Manager</a></li>
 <li>Install <a href="https://www.ndchost.com/cpanel-whm/addons/cleanbackups/" target="_blank">Clean Backups</a></li>
+<li>Install <a href="https://github.com/major/MySQLTuner-perl" target="_blank">MySQL Tuner</a></li>
 <li>Install yum terminal colors</li>
 <li>Update Firewall Configuration</li>
 <li>Update SSH Configuration ( Port, and UseDNS )</li>
