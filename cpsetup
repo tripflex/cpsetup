@@ -1,5 +1,6 @@
 #!/bin/bash
 cpSetup_banner() {
+	echo -n "${GREEN}"
 	cat <<"EOT"
                         ad88888ba
                        d8"     "8b              ,d
@@ -11,6 +12,9 @@ a8"     "" 88P'    "8a   `"""""8b, a8P_____88   88    88       88 88P'    "8a
  `"Ybbd8"' 88`YbbdP"'   "Y88888P"   `"Ybbd8"'   "Y888  `"YbbdP'Y8 88`YbbdP"'
            88                                                     88
            88                                                     88
+EOT
+echo -n "${YELLOW}"
+	cat <<"EOT"
 			 _                  __  __       _
 			| |__  _   _    ___|  \/  |_   _| |       ___  ___
 			| '_ \| | | |  / __| |\/| | | | | |      / _ \/ __|
@@ -18,12 +22,13 @@ a8"     "" 88P'    "8a   `"""""8b, a8P_____88   88    88       88 88P'    "8a
 			|_.__/ \__, |  |___/_|  |_|\__, |_| (_)  \___||___/
 			       |___/               |___/
 EOT
+echo -n "${NORMAL}"
 }
 #                     cPanel Server Setup & Hardening Script
 # ------------------------------------------------------------------------------
 # @author Myles McNamara
-# @date 10.15.2014
-# @version 1.0.0
+# @date 11.27.2014
+# @version 1.1.0
 # @source https://github.com/tripflex/cpsetup
 # ------------------------------------------------------------------------------
 # @usage ./cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)]
@@ -58,6 +63,7 @@ function help(){
     echo "-u or --unattended: Unattended installation ( bypasses all prompts ).";
     exit 1;
 }
+
 # Declare vars. Flags initalizing to 0.
 verbose="--quiet";
 yumargs="";
@@ -121,6 +127,15 @@ NORMAL=$(tput sgr0)
 BLINK=$(tput blink)
 REVERSE=$(tput smso)
 UNDERLINE=$(tput smul)
+
+BLACKBG=$(tput setab 0)
+REDBG=$(tput setab 1)
+GREENBG=$(tput setab 2)
+YELLOWBG=$(tput setab 3)
+BLUEBG=$(tput setab 4)
+MAGENTABG=$(tput setab 5)
+CYANBG=$(tput setab 6)
+WHITEBG=$(tput setab 7)
 
 function headerBlock {
 	l=${#1}
@@ -259,11 +274,48 @@ function installMalDetect(){
 	sh install.sh
 }
 
+function installSoftaculous(){
+	cd $builddir
+	wget -N http://files.softaculous.com/install.sh
+	chmod 755 install.sh
+	./install.sh
+}
+
+function installWatchMySQL(){
+	cd /usr/src
+	wget http://download.ndchost.com/watchmysql/latest-watchmysql
+	sh latest-watchmysql
+}
+
+function installPHPiniManager(){
+
+	cd /usr/local/cpanel/whostmgr/docroot/cgi
+	wget -O addon_phpinimgr.php http://download.how2.be/whm/phpinimgr/addon_phpinimgr.php.txt
+	chmod 700 addon_phpinimgr.php
+
+}
+
+function installCleanBackups(){
+
+	cd /usr/src
+	wget http://download.ndchost.com/cleanbackups/latest-cleanbackups
+	sh latest-cleanbackups
+
+}
+
+function installMySQLTuner(){
+
+	cd /usr/bin
+	wget http://mysqltuner.pl/ -O mysqltuner
+	chmod +x mysqltuner
+}
+
 function hardenServerConfig(){
 	# Check server startup for portreserve
 	service portreserve stop
 	chkconfig portreserve off
 
+	configureApache
 	configureCSF
 	configureSSH
 	configurecPanel
@@ -274,6 +326,34 @@ function hardenServerConfig(){
 	csf -r
 	/etc/init.d/lfd restart
 	/etc/init.d/httpd restart
+}
+
+function newCpanelApacheLocalConf(){
+cat << 'EOF' > /usr/local/cpanel/conf/apache/local
+---
+"main":
+  "serversignature":
+    "item":
+      "serversignature": 'Off'
+  "servertokens":
+    "item":
+      "servertokens": 'ProductOnly'
+  "traceenable":
+    "item":
+      "traceenable": 'Off'
+EOF
+}
+
+function configureApache(){
+
+	if [ ! -f /usr/local/cpanel/conf/apache/local ]; then
+		newCpanelApacheLocalConf
+		/scripts/rebuildhttpdconf
+		/etc/init.d/httpd
+	else
+		#TODO basic sed replacement
+		echo -e "cPanel Apache Local Configuration file ( /usr/local/cpanel/conf/apache/local ) already exists, unable to update"
+	fi
 }
 
 function configureCSF(){
@@ -335,9 +415,17 @@ function configurePHP(){
 clear
 cpSetup_banner
 echo -e "\n";
+
+echo -e "${WHITEBG}${RED}${BRIGHT}${BLINK}Heads Up!${NORMAL}${WHITEBG}${BLACK}There's a few things you should make sure of before running this script:${NORMAL}"
+echo -e "* You must have ${YELLOW}ioncube${NORMAL} enabled in ${YELLOW}WHM${NORMAL} under ${BLUE}Tweak Settings${NORMAL} > ${MAGENTA}cPanel PHP Loader${NORMAL} or Softaculous will not install"
+echo -e "* You must go through the initial setup in ${YELLOW}WHM${NORMAL}, selecting dns and ftp server type (when you first login to WHM) before running this script."
+echo -e "${BLUE}Like the script?  Contribute to the open source community and this project at http://github.com/tripflex/cpsetup ... surfs up!${NORMAL}"
+
 if (($unattended > 0)); then
 	echo -e "${YELLOW}!!! WARNING: Unattended mode ENABLED, you will not be prompted for each install/configuration !!!${NORMAL}"
 fi
+
+echo -e "\n";
 
 if ! givemeayes "${RED}Would you like to continue with the install?${NORMAL}"; then
 	echo -e "\n${RED}Script killed, nothing has been changed or installed.\n${NORMAL}"
@@ -395,6 +483,37 @@ fi
 if stepcheck "install R-fx Malware Detect"; then
 	headerBlock "Installing R-fx Malware Detect, please wait..."
 	installMalDetect
+fi
+
+echo -n "${YELLOW}Just a heads up:${NORMAL} You must have ${YELLOW}ioncube${NORMAL} enabled in ${YELLOW}WHM${NORMAL} under ${BLUE}Tweak Settings${NORMAL} > ${MAGENTA}cPanel PHP Loader${NORMAL} or Softaculous will not install"
+if stepcheck "install Softaculous"; then
+	headerBlock "Installing Softaculous, please wait..."
+	installSoftaculous
+fi
+
+if stepcheck "install Account DNS Check"; then
+	headerBlock "Installing Account DNS Check, please wait..."
+	installAccountDNSCheck
+fi
+
+if stepcheck "install WatchMySQL"; then
+	headerBlock "Installing WatchMySQL, please wait..."
+	installWatchMySQL
+fi
+
+if stepcheck "install PHP.INI Manager"; then
+	headerBlock "Installing PHP.INI Manager, please wait..."
+	installPHPiniManager
+fi
+
+if stepcheck "install Clean Backups"; then
+	headerBlock "Installing Clean Backups, please wait..."
+	installCleanBackups
+fi
+
+if stepcheck "install MySQL Tuner"; then
+	headerBlock "Installing MySQL Tuner, please wait..."
+	installCleanBackups
 fi
 
 if stepcheck "harden server configuration"; then
