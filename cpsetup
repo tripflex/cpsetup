@@ -303,6 +303,14 @@ function installCleanBackups(){
 
 }
 
+install accountDNSCheck(){
+
+	cd /usr/src
+	wget http://download.ndchost.com/accountdnscheck/latest-accountdnscheck
+	sh latest-accountdnscheck
+
+}
+
 function installMySQLTuner(){
 
 	cd /usr/bin
@@ -329,7 +337,7 @@ function hardenServerConfig(){
 }
 
 function newCpanelApacheLocalConf(){
-cat << 'EOF' > /usr/local/cpanel/conf/apache/local
+cat << 'EOF' > /var/cpanel/conf/apache/local
 ---
 "main":
   "serversignature":
@@ -346,13 +354,13 @@ EOF
 
 function configureApache(){
 
-	if [ ! -f /usr/local/cpanel/conf/apache/local ]; then
+	if [ ! -f /var/cpanel/conf/apache/local ]; then
 		newCpanelApacheLocalConf
 		/scripts/rebuildhttpdconf
 		/etc/init.d/httpd
 	else
 		#TODO basic sed replacement
-		echo -e "cPanel Apache Local Configuration file ( /usr/local/cpanel/conf/apache/local ) already exists, unable to update"
+		echo -e "cPanel Apache Local Configuration file ( /var/cpanel/conf/apache/local ) already exists, unable to update"
 	fi
 }
 
@@ -485,7 +493,8 @@ if stepcheck "install R-fx Malware Detect"; then
 	installMalDetect
 fi
 
-echo -n "${YELLOW}Just a heads up:${NORMAL} You must have ${YELLOW}ioncube${NORMAL} enabled in ${YELLOW}WHM${NORMAL} under ${BLUE}Tweak Settings${NORMAL} > ${MAGENTA}cPanel PHP Loader${NORMAL} or Softaculous will not install"
+echo -n "${YELLOW}Just a heads up${RED}( do this NOW ): ${NORMAL}You must have ${YELLOW}ioncube${NORMAL} enabled in ${YELLOW}WHM${NORMAL} under ${BLUE}Tweak Settings${NORMAL} > ${MAGENTA}cPanel PHP Loader${NORMAL} or Softaculous will not install"
+echo -e "\n";
 if stepcheck "install Softaculous"; then
 	headerBlock "Installing Softaculous, please wait..."
 	installSoftaculous
