@@ -1,10 +1,6 @@
 cpsetup
 =======
 
-Author: Myles McNamara
-Version: 1.1.0
-Last Update: November 27, 2014
-
 <table border="0">
 <tr>
 <td width="60%"><h3>cpsetup</h3> is a custom bash/shell script to setup and harden cPanel CentOS/RHEL server with ConfigServer Firewall, MailManage, MailQueue, Malware Detect, and many security tweaks.
