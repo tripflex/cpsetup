@@ -303,7 +303,7 @@ function installCleanBackups(){
 
 }
 
-install accountDNSCheck(){
+function installAccountDNSCheck(){
 
 	cd /usr/src
 	wget http://download.ndchost.com/accountdnscheck/latest-accountdnscheck
