@@ -199,6 +199,13 @@ function stepcheck {
 	    esac
 }
 
+function installCXS(){
+	wget https://download.configserver.com/cxsinstaller.tgz --no-check-certificate
+	tar -xzf cxsinstaller.tgz
+	perl cxsinstaller.pl
+	rm -fv cxsinstaller.*
+}
+
 function installClamAV(){
 	/scripts/ensurerpm ${verbose} gmp gmp-devel bzip2-devel
 	useradd clamav
