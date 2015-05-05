@@ -220,6 +220,7 @@ function installClamAV(){
 	sed -i -e 's/Example/#Example/g' /usr/local/etc/freshclam.conf
 	sed -i -e 's/Example/#Example/g' /usr/local/etc/clamd.conf
 	sed -i -e 's/#LocalSocket/LocalSocket/g' /usr/local/etc/clamd.conf
+	sed -i -e 's/LocalSocketGroup/#LocalSocketGroup/g' /usr/local/etc/clamd.conf
 	sed -i -e 's/clamd.socket/clamd/g' /usr/local/etc/clamd.conf
 	ldconfig
 	headerBlock "Updating ClamAV definition files..."
