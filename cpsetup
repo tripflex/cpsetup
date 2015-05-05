@@ -1,4 +1,5 @@
 #!/bin/bash
+version="1.2.0";
 cpSetup_banner() {
 	echo -n "${GREEN}"
 	cat <<"EOT"
@@ -27,13 +28,13 @@ echo -n "${NORMAL}"
 #                     cPanel Server Setup & Hardening Script
 # ------------------------------------------------------------------------------
 # @author Myles McNamara
-# @date 11.27.2014
-# @version 1.1.0
+# @date 5.5.2015
+# @version 1.2.0
 # @source https://github.com/tripflex/cpsetup
 # ------------------------------------------------------------------------------
 # @usage ./cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)]
 # ------------------------------------------------------------------------------
-# @copyright Copyright (C) 2014 Myles McNamara
+# @copyright Copyright (C) 2015 Myles McNamara
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -55,12 +56,15 @@ echo -n "${NORMAL}"
 function help(){
     echo "cpsetup - cPanel setup script";
     echo "Usage example:";
-    echo "cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)]";
+    echo "cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)] [(-m|--menu)] [(-r|--run) value]";
     echo "Options:";
     echo "-h or --help: Displays this information.";
     echo "-v or --verbose: Verbose mode on.";
     echo "-V or --version: Displays the current version number.";
     echo "-u or --unattended: Unattended installation ( bypasses all prompts ).";
+    echo "-m or --menu: Show interactive UI menu.";
+    echo "-r or --run: Run a specific function.";
+    echo "-R or --functions: Show available functions to use with -r or --run command.";
     exit 1;
 }
 
@@ -69,12 +73,14 @@ verbose="--quiet";
 yumargs="";
 version=0;
 unattended=0;
+menu=0;
 builddir=~/cpsetupbuild/
 sshport=222;
 rootemail="your@email.com";
+functions=0;
 
 # Execute getopt
-ARGS=$(getopt -o "hvVu" -l "help,verbose,version,unattended" -n "cpsetup" -- "$@");
+ARGS=$(getopt -o "hvVumr:R" -l "help,verbose,version,unattended,menu,run:,functions" -n "cpsetup" -- "$@");
 
 #Bad arguments
 if [ $? -ne 0 ];
@@ -96,13 +102,30 @@ while true; do
             ;;
         -V|--version)
             shift;
-                    echo "Version 1.0.0";
+                    echo "$version";
                     exit 1;
             ;;
         -u|--unattended)
             shift;
                     unattended="1";
                     yumargs="-y";
+            ;;
+        -m|--menu)
+            shift;
+                    menu="1";
+            ;;
+        -r|--run)
+            shift;
+                    if [ -n "$1" ];
+                    then
+                        runcalled="1";
+                        run="$1";
+                        shift;
+                    fi
+            ;;
+        -R|--functions)
+            shift;
+            	functions="1";
             ;;
 
         --)
@@ -420,17 +443,54 @@ function configurePHP(){
 	sed -i -e 's/disable_functions =/disable_functions = show_source, system, shell_exec, passthru, exec, phpinfo, popen, proc_open, allow_url_fopen, ini_set/g' /usr/local/lib/php.ini
 }
 
+function promptForSSHPort(){
+	# Configuration Prompts ( only shown when -u is NOT specified )
+	if (($unattended < 1)); then
+		echo -n "${MAGENTA}Enter SSH port to change from ${BLUE}${sshport}${MAGENTA}:${NORMAL} "
+		read customsshport
+		if [ $customsshport ]; then
+			sshport=customsshport
+		fi
+	fi
+}
+
+function promptForRootForwardEmail(){
+	# Configuration Prompts ( only shown when -u is NOT specified )
+	if (($unattended < 1)); then
+
+		echo -n "${MAGENTA}Enter root forwarding email to change from ${BLUE}${rootemail}${MAGENTA}:${NORMAL} "
+		read customrootemail
+		if [ $customrootemail ]; then
+			rootemail=customrootemail
+		fi
+
+	fi
+}
+
 clear
 cpSetup_banner
 echo -e "\n";
+
+if (($functions > 0)); then
+	echo -e "${RED}Here's a list of available functions to call when using the -r or --run command:${NORMAL}"
+	echo -e "\n";
+	compgen -A function | egrep -vw 'givemeayes|help|headerBlock|lineBreak|stepcheck|promptForSSHPort|promptForRootForwardEmail|cpSetup_banner';
+	echo -e "\n";
+	exit;
+fi
 
 echo -e "${WHITEBG}${RED}${BRIGHT}${BLINK}Heads Up!${NORMAL}${WHITEBG}${BLACK}There's a few things you should make sure of before running this script:${NORMAL}"
 echo -e "* You must have ${YELLOW}ioncube${NORMAL} enabled in ${YELLOW}WHM${NORMAL} under ${BLUE}Tweak Settings${NORMAL} > ${MAGENTA}cPanel PHP Loader${NORMAL} or Softaculous will not install"
 echo -e "* You must go through the initial setup in ${YELLOW}WHM${NORMAL}, selecting dns and ftp server type (when you first login to WHM) before running this script."
 echo -e "${BLUE}Like the script?  Contribute to the open source community and this project at http://github.com/tripflex/cpsetup ... surfs up!${NORMAL}"
+echo -e "\n";
 
 if (($unattended > 0)); then
 	echo -e "${YELLOW}!!! WARNING: Unattended mode ENABLED, you will not be prompted for each install/configuration !!!${NORMAL}"
+fi
+
+if [ $run ]; then
+	echo -e "${YELLOW}RUN command specified, only the${RED} $run ${YELLOW}function will be executed. ${NORMAL}"
 fi
 
 echo -e "\n";
@@ -446,20 +506,10 @@ fi
 
 mkdir $builddir
 
-# Configuration Prompts ( only shown when -u is NOT specified )
-if (($unattended < 1)); then
-	echo -n "${MAGENTA}Enter SSH port to change from ${BLUE}${sshport}${MAGENTA}:${NORMAL} "
-	read customsshport
-	if [ $customsshport ]; then
-		sshport=customsshport
-	fi
+if [ $run ]; then
+	#${run}
 
-	echo -n "${MAGENTA}Enter root forwarding email to change from ${BLUE}${rootemail}${MAGENTA}:${NORMAL} "
-	read customrootemail
-	if [ $customrootemail ]; then
-		rootemail=customrootemail
-	fi
-
+	exit;
 fi
 
 if stepcheck "install yum colors"; then
@@ -526,6 +576,8 @@ if stepcheck "install MySQL Tuner"; then
 fi
 
 if stepcheck "harden server configuration"; then
+	promptForSSHPort
+	promptForRootForwardEmail
 	headerBlock "Securing the server with configuration tweaks, please wait..."
 	hardenServerConfig
 fi
