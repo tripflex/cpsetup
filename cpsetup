@@ -581,6 +581,11 @@ if stepcheck "harden server configuration"; then
 	hardenServerConfig
 fi
 
+if stepcheck "install ClamAV from source"; then
+	headerBlock "Installing ClamAV from source, please wait..."
+	installClamAV
+fi
+
 headerBlock "Cleaning up build files, please wait..."
 cd ~
 rm -rf $builddir
