@@ -2,8 +2,8 @@ cpsetup
 =======
 
 <strong>Author:</strong> Myles McNamara<br/>
-<strong>Version:</strong> 1.1.0<br/>
-<strong>Last Update:</strong> November 27, 2014
+<strong>Version:</strong> 1.2.0<br/>
+<strong>Last Update:</strong> May 5, 2015
 
 <table border="0">
 <tr>
@@ -56,6 +56,9 @@ Options:
 -v or --verbose: Verbose mode on.
 -V or --version: Displays the current version number.
 -u or --unattended: Unattended installation ( bypasses all prompts ).
+-m or --menu: Show interactive UI menu (NOT yet implimented)
+-r or --run: Run a specific function.
+-R or --functions: Show available functions to use with -r or --run command.
 ```
 
 
