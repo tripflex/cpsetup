@@ -78,6 +78,8 @@ builddir=~/cpsetupbuild/
 sshport=222;
 rootemail="your@email.com";
 functions=0;
+cloudflare_api_key="";
+cloudflare_company_name="";
 
 # Execute getopt
 ARGS=$(getopt -o "hvVumr:R" -l "help,verbose,version,unattended,menu,run:,functions" -n "cpsetup" -- "$@");
@@ -200,6 +202,7 @@ function stepcheck {
 }
 
 function installCXS(){
+	cd ~
 	wget https://download.configserver.com/cxsinstaller.tgz --no-check-certificate
 	tar -xzf cxsinstaller.tgz
 	perl cxsinstaller.pl
@@ -350,6 +353,25 @@ function installMySQLTuner(){
 	chmod +x mysqltuner
 }
 
+function installModCloudFlare(){
+	bash <(curl -s https://raw.githubusercontent.com/cloudflare/CloudFlare-CPanel/master/cloudflare.install.sh) $cloudflare_api_key "${cloudflare_company_name}"
+
+	echo -e "\n${YELLOW}Here is the CloudFlare configuration file (  /usr/local/cpanel/etc/cloudflare.json ): \n${NORMAL}"
+	cat /usr/local/cpanel/etc/cloudflare.json
+}
+
+function installCloudFlareSubnetsCSFallow(){
+
+	wget --output-document=- "https://www.cloudflare.com/ips-v4" >> /etc/csf/csf.ignore
+	wget --output-document=- "https://www.cloudflare.com/ips-v6" >> /etc/csf/csf.ignore
+	echo -e "\n${YELLOW}Restarting CSF...\n${NORMAL}"
+	csf -r
+}
+
+function installCloudFlareRailGun(){
+
+}
+
 function hardenServerConfig(){
 	# Check server startup for portreserve
 	service portreserve stop
@@ -475,6 +497,22 @@ function promptForRootForwardEmail(){
 	fi
 }
 
+function promptForCloudFlareConfig(){
+	# Configuration Prompts ( only shown when -u is NOT specified )
+	if (($unattended < 1)); then
+
+		echo -n "${MAGENTA}Enter your CloudFlare API key (if not already set in this file).  Existing value: ${BLUE}${cloudflare_api_key}${MAGENTA}:${NORMAL} "
+		read custom_cloudflare_api_key
+		if [ $custom_cloudflare_api_key ]; then cloudflare_api_key=$custom_cloudflare_api_key
+		fi
+
+		echo -n "${MAGENTA}Enter your Hosting Company Name (if not already set in this file).  Existing value: ${BLUE}${cloudflare_company_name}${MAGENTA}:${NORMAL} "
+		read custom_cloudflare_company_name
+		if [ $custom_cloudflare_company_name ]; then cloudflare_company_name=$custom_cloudflare_company_name
+		fi
+	fi
+}
+
 clear
 cpSetup_banner
 echo -e "\n";
@@ -592,6 +630,12 @@ fi
 if stepcheck "install ClamAV from source"; then
 	headerBlock "Installing ClamAV from source, please wait..."
 	installClamAV
+fi
+
+if stepcheck "install CloudFlare mod_cloudflare"; then
+	promptForCloudFlareConfig
+	headerBlock "Downloading and installing mod_cloudflare, please wait..."
+	installModCloudFlare
 fi
 
 headerBlock "Cleaning up build files, please wait..."
