@@ -80,6 +80,8 @@ rootemail="your@email.com";
 functions=0;
 cloudflare_api_key="";
 cloudflare_company_name="";
+railgun_token="YOUR_TOKEN_HERE";
+railgun_host="YOUR_PUBLIC_IP_OR_HOSTNAME";
 
 # Execute getopt
 ARGS=$(getopt -o "hvVumr:R" -l "help,verbose,version,unattended,menu,run:,functions" -n "cpsetup" -- "$@");
@@ -521,14 +523,38 @@ function promptForCloudFlareConfig(){
 	# Configuration Prompts ( only shown when -u is NOT specified )
 	if (($unattended < 1)); then
 
-		echo -n "${MAGENTA}Enter your CloudFlare API key (if not already set in this file).  Existing value: ${BLUE}${cloudflare_api_key}${MAGENTA}:${NORMAL} "
+		echo -n "${MAGENTA}Enter your CloudFlare API Key if different from existing${MAGENTA}:${NORMAL} "
+		echo -n "\nExisting value: ${BLUE}${cloudflare_api_key}${NORMAL} \n"
 		read custom_cloudflare_api_key
 		if [ $custom_cloudflare_api_key ]; then cloudflare_api_key=$custom_cloudflare_api_key
 		fi
 
-		echo -n "${MAGENTA}Enter your Hosting Company Name (if not already set in this file).  Existing value: ${BLUE}${cloudflare_company_name}${MAGENTA}:${NORMAL} "
+		echo -n "${MAGENTA}Enter your Hosting Company Name if different from existing${MAGENTA}:${NORMAL} "
+		echo -n "\nExisting value: ${BLUE}${cloudflare_company_name}${NORMAL} \n"
 		read custom_cloudflare_company_name
 		if [ $custom_cloudflare_company_name ]; then cloudflare_company_name=$custom_cloudflare_company_name
+		fi
+	fi
+}
+
+function promptForRailGunConfig(){
+	# Configuration Prompts ( only shown when -u is NOT specified )
+	if (($unattended < 1)); then
+
+		server_hostname=$(hostname);
+		server_ip=$(curl icanhazip.com);
+
+		echo -n "${MAGENTA}Enter your CloudFlare RailGun Token if different from existing (find this at https://partners.cloudflare.com) ${MAGENTA}:${NORMAL} "
+		echo -n "\nExisting value: ${BLUE}${railgun_token}${NORMAL} \n"
+		read custom_railgun_token
+		if [ $custom_railgun_token ]; then railgun_token=$custom_railgun_token
+		fi
+
+		echo -n "${MAGENTA}Enter your CloudFlare RailGun Host if different from existing (should be servers IP or hostname) ${MAGENTA}:${NORMAL} "
+		echo -n "\nExisting value: ${BLUE}${railgun_host}${NORMAL}"
+		echo -n "\nFor reference, your hostname is ${BLUE}${server_hostname}${NORMAL}, your IP is ${BLUE}${server_ip}${NORMAL}\n"
+		read custom_railgun_host
+		if [ $custom_railgun_host ]; then railgun_host=$custom_railgun_host
 		fi
 	fi
 }
@@ -552,7 +578,7 @@ echo -e "${BLUE}Like the script?  Contribute to the open source community and th
 echo -e "\n";
 
 if (($unattended > 0)); then
-	echo -e "${YELLOW}!!! WARNING: Unattended mode ENABLED, you will not be prompted for each install/configuration !!!${NORMAL}"
+	echo -e "${YELLOW}!!! WARNING: Unattended mode ENABLED, MAKE SURE YOU SET ALL CONFIG VALUES IN THIS SCRIPT !! YOU HAVE BEEN WARNED !!${NORMAL}"
 fi
 
 if [ $run ]; then
@@ -697,6 +723,16 @@ if stepcheck "install CloudFlare RailGun (includes memcached)"; then
 	fi
 	headerBlock "Restarting ConfigServer Firewall, please wait..."
 	csf -r
+fi
+
+if stepcheck "configure CloudFlare RailGun"; then
+	promptForRailGunConfig
+	sed -i -e 's/memcached.servers/#memcached.servers/g' /etc/railgun/railgun.conf
+	sed -i -e 's/activation.token/#activation.token/g' /etc/railgun/railgun.conf
+	sed -i -e 's/activation.railgun_host/#activation.railgun_host/g' /etc/railgun/railgun.conf
+	echo "memcached.servers = /var/run/memcached/memcached.sock" >> /etc/railgun/railgun.conf
+	echo "activation.token = ${railgun_token}" >> /etc/railgun/railgun.conf
+	echo "activation.railgun_host = ${railgun_host}" >> /etc/railgun/railgun.conf
 fi
 
 if stepcheck "configure memcached for RailGun using sockets"; then
