@@ -360,12 +360,12 @@ function installModCloudFlare(){
 	cat /usr/local/cpanel/etc/cloudflare.json
 }
 
-function installCloudFlareSubnetsCSFallow(){
-
-	wget --output-document=- "https://www.cloudflare.com/ips-v4" >> /etc/csf/csf.ignore
+function addCloudFlareIPv6SubnetsToCSF(){
 	wget --output-document=- "https://www.cloudflare.com/ips-v6" >> /etc/csf/csf.ignore
-	echo -e "\n${YELLOW}Restarting CSF...\n${NORMAL}"
-	csf -r
+}
+
+function addCloudFlareIPv4SubnetsToCSF(){
+	wget --output-document=- "https://www.cloudflare.com/ips-v4" >> /etc/csf/csf.ignore
 }
 
 function installCloudFlareRailGun(){
@@ -636,6 +636,15 @@ if stepcheck "install CloudFlare mod_cloudflare"; then
 	promptForCloudFlareConfig
 	headerBlock "Downloading and installing mod_cloudflare, please wait..."
 	installModCloudFlare
+fi
+
+if stepcheck "add CloudFlare IPv4 and IPv6 subnets to ConfigServer Firewall allow list"; then
+	headerBlock "Adding IPv4 subnets to CSF allow list, please wait..."
+	addCloudFlareIPv4SubnetsToCSF
+	headerBlock "Adding IPv6 subnets to CSF allow list, please wait..."
+	addCloudFlareIPv4SubnetsToCSF
+	headerBlock "Restarting ConfigServer Firewall, please wait..."
+	csf -r
 fi
 
 headerBlock "Cleaning up build files, please wait..."
