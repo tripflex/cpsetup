@@ -368,8 +368,28 @@ function addCloudFlareIPv4SubnetsToCSF(){
 	wget --output-document=- "https://www.cloudflare.com/ips-v4" >> /etc/csf/csf.ignore
 }
 
-function installCloudFlareRailGun(){
+function configureMemCached(){
+	if [ -f /etc/sysconfig/memcached ];then
+		echo -e "\n${RED}The /etc/sysconfig/memcached file already exists, renaming to memcached.old ...\n${NORMAL}"
+		mv /etc/sysconfig/memcached /etc/sysconfig/memcached.old
+	fi
 
+	echo 'PORT="22222"' >> /etc/sysconfig/memcached
+	echo 'USER="memcached"' >> /etc/sysconfig/memcached
+	echo 'MAXCONN="20480"' >> /etc/sysconfig/memcached
+	echo 'CACHESIZE="4096"' >> /etc/sysconfig/memcached
+	echo 'OPTIONS="-s /var/run/memcached/memcached.sock"' >> /etc/sysconfig/memcached
+	chmod 777 /var/run/memcached/memcached.sock
+
+	echo -e "\n${NORMAL}If you want to change, review, or update memcached, use the ${YELLOW}/etc/sysconfig/memcached${NORMAL} file."
+}
+
+function installCloudFlarePackageRepo(){
+
+	RHEL_VERSION=$(rpm -q --qf "%{VERSION}" $(rpm -q --whatprovides redhat-release) );
+	PACKAGE_URL="http://pkg.cloudflare.com/cloudflare-release-latest.el${RHEL_VERSION}.rpm"
+
+	sudo rpm -ivh $PACKAGE_URL
 }
 
 function hardenServerConfig(){
@@ -645,6 +665,43 @@ if stepcheck "add CloudFlare IPv4 and IPv6 subnets to ConfigServer Firewall allo
 	addCloudFlareIPv4SubnetsToCSF
 	headerBlock "Restarting ConfigServer Firewall, please wait..."
 	csf -r
+fi
+
+if stepcheck "install CloudFlare RailGun (includes memcached)"; then
+	headerBlock "Attempting to install MemCached, please wait..."
+	yum install memcached -y
+
+	headerBlock "Adding CloudFlare RailGun package repository, please wait..."
+	installCloudFlarePackageRepo
+
+	headerBlock "Installing CloudFlare Railgun, please wait..."
+	yum install railgun-stable -y
+
+	headerBlock "Adding ... CloudFlareRemoteIPTrustedProxy 127.0.0.1 ... to apache user conf file ..."
+	if grep -q "CloudFlareRemoteIPTrustedProxy" /usr/local/apache/conf/includes/post_virtualhost_global.conf ; then
+		echo -e "\n${RED}CloudFlareRemoteIPTrustedProxy already found in /usr/local/apache/conf/includes/post_virtualhost_global.conf file!\n${NORMAL}"
+	else
+		echo "CloudFlareRemoteIPTrustedProxy 127.0.0.1" >> /usr/local/apache/conf/includes/post_virtualhost_global.conf
+		headerBlock "Rebuilding apache configuration ..."
+		/scripts/rebuildhttpdconf
+		headerBlock "Restarting apache ..."
+		/scripts/restartsrv_apache
+	fi
+
+	headerBlock "Adding memcached and rg-listener to CSF process ignore list..."
+	if grep -q "exe:/usr/bin/memcached" /etc/csf/csf.pignore ; then
+		echo "exe:/usr/bin/memcached" >> /etc/csf/csf.pignore
+	fi
+	if grep -q "exe:/usr/bin/rg-listener" /etc/csf/csf.pignore ; then
+		echo "exe:/usr/bin/rg-listener" >> /etc/csf/csf.pignore
+	fi
+	headerBlock "Restarting ConfigServer Firewall, please wait..."
+	csf -r
+fi
+
+if stepcheck "configure memcached for RailGun using sockets"; then
+	headerBlock "Creating /etc/sysconfig/memcached configuration file, please wait ..."
+	configureMemCached
 fi
 
 headerBlock "Cleaning up build files, please wait..."
