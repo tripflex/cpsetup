@@ -523,6 +523,9 @@ function promptForCloudFlareConfig(){
 	# Configuration Prompts ( only shown when -u is NOT specified )
 	if (($unattended < 1)); then
 
+		echo -e "\n${WHITEBG}${BLACK}!! HEADS UP !! The mod_cloudflare module will be installed, but you need to recompile Apache with EasyApache in WHM to enable mod_cloudflare!${NORMAL}\n";
+		read -p "Press [Enter] key when you are ready to continue..."
+
 		echo -e "${MAGENTA}Enter your CloudFlare API Key if different from existing${MAGENTA}:${NORMAL} "
 		echo -e "\nExisting value: ${BLUE}${cloudflare_api_key}${NORMAL} \n"
 		read custom_cloudflare_api_key
