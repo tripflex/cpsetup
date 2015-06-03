@@ -1,23 +1,29 @@
-cpsetup
+cpSetup
 =======
 
 <strong>Author:</strong> Myles McNamara<br/>
 <strong>Version:</strong> 1.3.0<br/>
 <strong>Last Update:</strong> June 2, 2015
 
-<table border="0">
-<tr>
-<td width="60%"><h3>cpsetup</h3> is a custom bash/shell script to setup and harden cPanel CentOS/RHEL server with ConfigServer Firewall, MailManage, MailQueue, Malware Detect, Account DNS Check, ClamAV, Softaculous, WatchMySQL, PHP.ini Manager, Clean Backups, MySQL Tuner, mod_cloudflare, CloudFlare RailGun, and many other tweaks and configurations.
+<strong>cpsetup</strong> is a custom bash/shell script to setup and harden/configure cPanel CentOS/RHEL server with a wide range of applications, plugins, and modules.
 
-You can use this script to install or configure each option individually, or all of them at once (with or without prompts).
+Each installation and configuration/hardening is organized into functions. By default running the script without any arguments will prompt for each install/configuration as well as prompt for any required configs (email, api key, etc).
 
-To see a list of functions available, execute this command:
-
+You can also run any of the available functions individually ... to see a list of functions available, execute this command:
 ```bash
 ./cpsetup --functions
 ```
+Usage
+===
+```bash
+wget https://raw.githubusercontent.com/tripflex/cpsetup/master/cpsetup
+chmod +x cpsetup
+./cpsetup
+```
 
-<br />
+<table border="0">
+<tr>
+<td width="60%">
 <h4>Features Include:</h4>
 <ul>
 <li>Install ClamAV from Source</li>
@@ -31,10 +37,10 @@ To see a list of functions available, execute this command:
 <li>Install <a href="http://how2.be/en/community/phpinimgr/" target="_blank">PHP.ini Manager</a></li>
 <li>Install <a href="https://www.ndchost.com/cpanel-whm/addons/cleanbackups/" target="_blank">Clean Backups</a></li>
 <li>Install <a href="https://github.com/major/MySQLTuner-perl" target="_blank">MySQL Tuner</a></li>
-<li>Install Apache mod_cloudflare</li>
-<li>Install CloudFlare RailGun</li>
+<li>Install <a href="https://www.cloudflare.com/static/media/pdf/cloudflare-cpanel-installation-activation-guide.pdf" target="_blank">cPanel mod_cloudflare</a> (<a href="https://github.com/tripflex/cloudflarecp" target="_blank">cloudflarecp</a>)</li>
+<li>Install <a href="https://www.cloudflare.com/railgun" target="_blank">CloudFlare RailGun</a></li>
 <li>Install yum terminal colors</li>
-<li>Configure/Setup CloudFlare RailGun</li>
+<li><a href="https://www.cloudflare.com/docs/railgun/installation.html" target="_blank">Configure/Setup CloudFlare RailGun</a></li>
 <li>Configure CloudFlare RailGun and MemCached (using socket)</li>
 <li>Update Firewall Allow list with CloudFlare IPs</li>
 <li>Update Firewall Configuration</li>
@@ -63,7 +69,7 @@ Available Arguments
 ```
 cpsetup - sMyles cPanel Setup Script
 Usage example:
-cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)]
+./cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)] [(-m|--menu)] [(-r|--run) value] [(-R|--functions)]
 Options:
 -h or --help: Displays this information.
 -v or --verbose: Verbose mode on.
