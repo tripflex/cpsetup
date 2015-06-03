@@ -37,8 +37,8 @@ chmod +x cpsetup
 <li>Install <a href="http://how2.be/en/community/phpinimgr/" target="_blank">PHP.ini Manager</a></li>
 <li>Install <a href="https://www.ndchost.com/cpanel-whm/addons/cleanbackups/" target="_blank">Clean Backups</a></li>
 <li>Install <a href="https://github.com/major/MySQLTuner-perl" target="_blank">MySQL Tuner</a></li>
-<li>Install Apache mod_cloudflare</li>
-<li>Install CloudFlare RailGun</li>
+<li>Install <a href="https://www.cloudflare.com/static/media/pdf/cloudflare-cpanel-installation-activation-guide.pdf" target="_blank">cPanel mod_cloudflare</a> (<a href="https://github.com/tripflex/cloudflarecp" target="_blank">cloudflarecp</a>)</li>
+<li>Install <a href="https://www.cloudflare.com/railgun" target="_blank">CloudFlare RailGun</a></li>
 <li>Install yum terminal colors</li>
 <li>Configure/Setup CloudFlare RailGun</li>
 <li>Configure CloudFlare RailGun and MemCached (using socket)</li>
@@ -69,7 +69,7 @@ Available Arguments
 ```
 cpsetup - sMyles cPanel Setup Script
 Usage example:
-cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)] [(-r|--run)] [(-R|--functions)]
+./cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)] [(-m|--menu)] [(-r|--run) value] [(-R|--functions)]
 Options:
 -h or --help: Displays this information.
 -v or --verbose: Verbose mode on.
