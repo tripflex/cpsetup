@@ -40,7 +40,7 @@ chmod +x cpsetup
 <li>Install <a href="https://www.cloudflare.com/static/media/pdf/cloudflare-cpanel-installation-activation-guide.pdf" target="_blank">cPanel mod_cloudflare</a> (<a href="https://github.com/tripflex/cloudflarecp" target="_blank">cloudflarecp</a>)</li>
 <li>Install <a href="https://www.cloudflare.com/railgun" target="_blank">CloudFlare RailGun</a></li>
 <li>Install yum terminal colors</li>
-<li>Configure/Setup CloudFlare RailGun</li>
+<li><a href="https://www.cloudflare.com/docs/railgun/installation.html" target="_blank">Configure/Setup CloudFlare RailGun</a></li>
 <li>Configure CloudFlare RailGun and MemCached (using socket)</li>
 <li>Update Firewall Allow list with CloudFlare IPs</li>
 <li>Update Firewall Configuration</li>
