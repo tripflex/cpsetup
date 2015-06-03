@@ -759,22 +759,28 @@ if stepcheck "install CloudFlare RailGun (includes memcached)"; then
 	csf -r
 fi
 
+if stepcheck "configure memcached for RailGun using sockets"; then
+	headerBlock "Creating /etc/sysconfig/memcached configuration file, please wait ..."
+	configureMemCached
+	headerBlock "Restarting memcached service ..."
+	/etc/init.d/memcached restart
+fi
+
 if stepcheck "configure CloudFlare RailGun"; then
 	promptForRailGunConfig
+	headerBlock "Configuring CloudFlare RailGun, please wait ..."
 	sed -i -e 's/memcached.servers/#memcached.servers/g' /etc/railgun/railgun.conf
 	sed -i -e 's/activation.token/#activation.token/g' /etc/railgun/railgun.conf
 	sed -i -e 's/activation.railgun_host/#activation.railgun_host/g' /etc/railgun/railgun.conf
 	echo "memcached.servers = /var/run/memcached/memcached.sock" >> /etc/railgun/railgun.conf
 	echo "activation.token = ${railgun_token}" >> /etc/railgun/railgun.conf
 	echo "activation.railgun_host = ${railgun_host}" >> /etc/railgun/railgun.conf
-fi
-
-if stepcheck "configure memcached for RailGun using sockets"; then
-	headerBlock "Creating /etc/sysconfig/memcached configuration file, please wait ..."
-	configureMemCached
+	headerBlock "Restarting RailGun service..."
+	/etc/init.d/railgun restart
 fi
 
 headerBlock "Cleaning up build files, please wait..."
 cd ~
 rm -rf $builddir
 echo -e "\n${CYAN}Script Complete! Profit!\n${NORMAL}"
+echo -e "\n${WHITEBG}${RED}!!! If you installed mod_cloudflare DONT FORGET to login to WHM and recompile Apache with mod_cloudflare (using EasyApache) !!! \n${NORMAL}"
