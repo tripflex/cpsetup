@@ -561,10 +561,15 @@ function promptForRailGunConfig(){
 
 cpanel_installed=$(/usr/local/cpanel/cpanel -V 2>/dev/null)
 
+clear
+cpSetup_banner
+echo -e "\n";
 if [ -z "$cpanel_installed" ]; then
 	echo -e "${WHITEBG}${RED}${BRIGHT}${BLINK}Whoa Nelly!${NORMAL}${WHITEBG}${BLACK}It looks like cPanel is not installed on this server!${NORMAL}"
 	if givemeayes "${RED}Would you like to install cPanel before running this script?${NORMAL}"; then
 		headerBlock "No problem, let's get cPanel installed first ... this could take a minute ... or two ... or thirty .. please wait ..."
+		echo -e "\n";
+		read -p "Press [Enter] key when you are ready..."
 		cd /home && curl -o latest -L http://httpupdate.cpanel.net/latest && sh latest
 	else
 		if ! givemeayes "${RED}Okay no problem, do you want to continue to this script (without installing cPanel)?${NORMAL}"; then
@@ -573,10 +578,6 @@ if [ -z "$cpanel_installed" ]; then
 		fi
 	fi
 fi
-
-clear
-cpSetup_banner
-echo -e "\n";
 
 if (($functions > 0)); then
 	echo -e "${RED}Here's a list of available functions to call when using the -r or --run command:${NORMAL}"
