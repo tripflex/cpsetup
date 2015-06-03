@@ -2,12 +2,20 @@ cpsetup
 =======
 
 <strong>Author:</strong> Myles McNamara<br/>
-<strong>Version:</strong> 1.2.0<br/>
-<strong>Last Update:</strong> May 5, 2015
+<strong>Version:</strong> 1.3.0<br/>
+<strong>Last Update:</strong> June 2, 2015
 
 <table border="0">
 <tr>
-<td width="60%"><h3>cpsetup</h3> is a custom bash/shell script to setup and harden cPanel CentOS/RHEL server with ConfigServer Firewall, MailManage, MailQueue, Malware Detect, and many security tweaks.
+<td width="60%"><h3>cpsetup</h3> is a custom bash/shell script to setup and harden cPanel CentOS/RHEL server with ConfigServer Firewall, MailManage, MailQueue, Malware Detect, Account DNS Check, ClamAV, Softaculous, WatchMySQL, PHP.ini Manager, Clean Backups, MySQL Tuner, mod_cloudflare, CloudFlare RailGun, and many other tweaks and configurations.
+
+You can use this script to install or configure each option individually, or all of them at once (with or without prompts).
+
+To see a list of functions available, execute this command:
+
+```bash
+./cpsetup --functions
+```
 
 <br />
 <h4>Features Include:</h4>
@@ -23,7 +31,12 @@ cpsetup
 <li>Install <a href="http://how2.be/en/community/phpinimgr/" target="_blank">PHP.ini Manager</a></li>
 <li>Install <a href="https://www.ndchost.com/cpanel-whm/addons/cleanbackups/" target="_blank">Clean Backups</a></li>
 <li>Install <a href="https://github.com/major/MySQLTuner-perl" target="_blank">MySQL Tuner</a></li>
+<li>Install Apache mod_cloudflare</li>
+<li>Install CloudFlare RailGun</li>
 <li>Install yum terminal colors</li>
+<li>Configure/Setup CloudFlare RailGun</li>
+<li>Configure CloudFlare RailGun and MemCached (using socket)</li>
+<li>Update Firewall Allow list with CloudFlare IPs</li>
 <li>Update Firewall Configuration</li>
 <li>Update SSH Configuration ( Port, and UseDNS )</li>
 <li>Update cPanel Configurations</li>
@@ -48,7 +61,7 @@ Available Arguments
 -------------------
 
 ```
-cpsetup - cPanel setup script
+cpsetup - sMyles cPanel Setup Script
 Usage example:
 cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)]
 Options:
@@ -139,6 +152,26 @@ Option | Original Value | New Value
 Server Signature | On | Off
 Server Tokens | All | ProductOnly
 Trace Enable | On | Off
+
+CloudFlare RailGun Configuration
+-----------------------------------
+
+Option | Original Value | New Value
+--- | --- | ---
+memcached.servers | /tmp/memcached.sock | /var/run/memcached/memcached.sock
+activation.railgun_host | YOUR_PUBLIC_IP_OR_HOSTNAME | (user defined)
+activation.token | YOUR_TOKEN_HERE | (user defined)
+
+CloudFlare RailGun MemCached Configurations
+-----------------------------------
+
+Option | Original Value | New Value
+--- | --- | ---
+PORT | 11211 | 22222
+USER | memcached | memcached
+MAXCONN | 1024 | 20480
+CACHESIZE | 64 | 4096
+OPTIONS |  | -s /var/run/memcached/memcached.sock
 
 ### Caution
 Use at your own risk, if you don't know what you're doing you should probably not be using this script.  Myself and any contributors to this project take absolutely no responsibility for anything you do with this script. I **strongly** recommend reading the script so you understand what it does before using.
