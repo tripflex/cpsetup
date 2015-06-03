@@ -28,8 +28,8 @@ echo -n "${NORMAL}"
 #                     cPanel Server Setup & Hardening Script
 # ------------------------------------------------------------------------------
 # @author Myles McNamara
-# @date 5.5.2015
-# @version 1.2.0
+# @date 6.2.2015
+# @version 1.3.0
 # @source https://github.com/tripflex/cpsetup
 # ------------------------------------------------------------------------------
 # @usage ./cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)]
@@ -356,10 +356,11 @@ function installMySQLTuner(){
 }
 
 function installModCloudFlare(){
-	bash <(curl -s https://raw.githubusercontent.com/cloudflare/CloudFlare-CPanel/master/cloudflare.install.sh) $cloudflare_api_key "${cloudflare_company_name}"
-
-	echo -e "\n${YELLOW}Here is the CloudFlare configuration file (  /usr/local/cpanel/etc/cloudflare.json ): \n${NORMAL}"
-	cat /usr/local/cpanel/etc/cloudflare.json
+	cd $builddir
+	curl -k -L https://github.com/cloudflare/CloudFlare-CPanel/tarball/master > cloudflare.tar.gz
+	tar -zxvf cloudflare.tar.gz
+	cd cloudflare-CloudFlare-*/cloudflare/
+	./install_cf ${cloudflare_api_key} mod_cf "${cloudflare_company_name}"
 }
 
 function addCloudFlareIPv6SubnetsToCSF(){
@@ -387,6 +388,8 @@ function configureMemCached(){
 }
 
 function installCloudFlarePackageRepo(){
+
+	cd $builddir
 
 	RHEL_VERSION=$(rpm -q --qf "%{VERSION}" $(rpm -q --whatprovides redhat-release) );
 	PACKAGE_URL="http://pkg.cloudflare.com/cloudflare-release-latest.el${RHEL_VERSION}.rpm"
@@ -526,17 +529,21 @@ function promptForCloudFlareConfig(){
 		echo -e "\n${WHITEBG}${BLACK}!! HEADS UP !! The mod_cloudflare module will be installed, but you need to recompile Apache with EasyApache in WHM to enable mod_cloudflare!${NORMAL}\n";
 		read -p "Press [Enter] key when you are ready to continue..."
 
-		echo -e "${MAGENTA}Enter your CloudFlare API Key if different from existing${MAGENTA}:${NORMAL} "
 		echo -e "\nExisting value: ${BLUE}${cloudflare_api_key}${NORMAL} \n"
+		echo -e "${MAGENTA}Enter your CloudFlare API Key if different from existing${MAGENTA}:${NORMAL} "
 		read custom_cloudflare_api_key
 		if [ $custom_cloudflare_api_key ]; then cloudflare_api_key=$custom_cloudflare_api_key
 		fi
 
-		echo -e "${MAGENTA}Enter your Hosting Company Name if different from existing${MAGENTA}:${NORMAL} "
+		echo -e "\nUsing ${BLUE}${cloudflare_api_key}${NORMAL} as CloudFlare API Key\n"
+
 		echo -e "\nExisting value: ${BLUE}${cloudflare_company_name}${NORMAL} \n"
+		echo -e "${MAGENTA}Enter your Hosting Company Name if different from existing${MAGENTA}:${NORMAL} "
 		read custom_cloudflare_company_name
 		if [ $custom_cloudflare_company_name ]; then cloudflare_company_name=$custom_cloudflare_company_name
 		fi
+
+		echo -e "\nUsing ${BLUE}${cloudflare_company_name}${NORMAL} as CloudFlare Company Name\n"
 	fi
 }
 
@@ -545,20 +552,24 @@ function promptForRailGunConfig(){
 	if (($unattended < 1)); then
 
 		server_hostname=$(hostname);
-		server_ip=$(curl icanhazip.com);
+		server_ip=$(curl -4 icanhazip.com);
 
-		echo -e "${MAGENTA}Enter your CloudFlare RailGun Token if different from existing (find this at https://partners.cloudflare.com) ${MAGENTA}:${NORMAL} "
 		echo -e "\nExisting value: ${BLUE}${railgun_token}${NORMAL} \n"
+		echo -e "${MAGENTA}Enter your CloudFlare RailGun Token if different from existing (find this at https://partners.cloudflare.com)${MAGENTA}:${NORMAL} "
 		read custom_railgun_token
 		if [ $custom_railgun_token ]; then railgun_token=$custom_railgun_token
 		fi
 
-		echo -e "${MAGENTA}Enter your CloudFlare RailGun Host if different from existing (should be servers IP or hostname) ${MAGENTA}:${NORMAL} "
+		echo -e "\nUsing ${BLUE}${railgun_token}${NORMAL} as CloudFlare RailGun Token\n"
+
 		echo -e "\nExisting value: ${BLUE}${railgun_host}${NORMAL}"
 		echo -e "\nFor reference, your hostname is ${BLUE}${server_hostname}${NORMAL}, your IP is ${BLUE}${server_ip}${NORMAL}\n"
+		echo -e "${MAGENTA}Enter your CloudFlare RailGun Host if different from existing (should be servers IP or hostname)${MAGENTA}:${NORMAL} "
 		read custom_railgun_host
 		if [ $custom_railgun_host ]; then railgun_host=$custom_railgun_host
 		fi
+
+		echo -e "\nUsing ${BLUE}${railgun_host}${NORMAL} as CloudFlare RailGun Host\n"
 	fi
 }
 
@@ -652,8 +663,8 @@ if stepcheck "install R-fx Malware Detect"; then
 	headerBlock "Installing R-fx Malware Detect, please wait..."
 	installMalDetect
 fi
-
-echo -n "${YELLOW}Just a heads up${RED}( do this NOW ): ${NORMAL}You must have ${YELLOW}ioncube${NORMAL} enabled in ${YELLOW}WHM${NORMAL} under ${BLUE}Tweak Settings${NORMAL} > ${MAGENTA}cPanel PHP Loader${NORMAL} or Softaculous will not install"
+echo -e "\n";
+echo -n "${YELLOW}!! HEADS UP !!${RED}( You SHOULD do this NOW ): ${NORMAL}You must have ${YELLOW}ioncube${NORMAL} enabled in ${YELLOW}WHM${NORMAL} under ${BLUE}Tweak Settings${NORMAL} > ${MAGENTA}cPanel PHP Loader${NORMAL} or Softaculous will not install"
 echo -e "\n";
 if stepcheck "install Softaculous"; then
 	headerBlock "Installing Softaculous, please wait..."
