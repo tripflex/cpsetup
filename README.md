@@ -5,9 +5,7 @@ cpsetup
 <strong>Version:</strong> 1.3.0<br/>
 <strong>Last Update:</strong> June 2, 2015
 
-<table border="0">
-<tr>
-<td width="60%"><h3>cpsetup</h3> is a custom bash/shell script to setup and harden cPanel CentOS/RHEL server with ConfigServer Firewall, MailManage, MailQueue, Malware Detect, Account DNS Check, ClamAV, Softaculous, WatchMySQL, PHP.ini Manager, Clean Backups, MySQL Tuner, mod_cloudflare, CloudFlare RailGun, and many other tweaks and configurations.
+<h3>cpsetup</h3> is a custom bash/shell script to setup and harden cPanel CentOS/RHEL server with ConfigServer Firewall, MailManage, MailQueue, Malware Detect, Account DNS Check, ClamAV, Softaculous, WatchMySQL, PHP.ini Manager, Clean Backups, MySQL Tuner, mod_cloudflare, CloudFlare RailGun, and many other tweaks and configurations.
 
 You can use this script to install or configure each option individually, or all of them at once (with or without prompts).
 
@@ -17,7 +15,9 @@ To see a list of functions available, execute this command:
 ./cpsetup --functions
 ```
 
-<br />
+<table border="0">
+<tr>
+<td width="60%">
 <h4>Features Include:</h4>
 <ul>
 <li>Install ClamAV from Source</li>
