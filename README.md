@@ -69,7 +69,7 @@ Available Arguments
 ```
 cpsetup - sMyles cPanel Setup Script
 Usage example:
-cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)]
+cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)] [(-r|--run)] [(-R|--functions)]
 Options:
 -h or --help: Displays this information.
 -v or --verbose: Verbose mode on.
