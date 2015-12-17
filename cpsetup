@@ -388,7 +388,9 @@ function configureMemCached(){
 	echo 'MAXCONN="20480"' >> /etc/sysconfig/memcached
 	echo 'CACHESIZE="4096"' >> /etc/sysconfig/memcached
 	echo 'OPTIONS="-s /var/run/memcached/memcached.sock"' >> /etc/sysconfig/memcached
-	chmod 777 /var/run/memcached/memcached.sock
+	# Add railgun user to memcached group
+	usermod -a -G memcached railgun
+	chmod 770 /var/run/memcached/memcached.sock
 
 	echo -e "\n${NORMAL}If you want to change, review, or update memcached, use the ${YELLOW}/etc/sysconfig/memcached${NORMAL} file."
 }
