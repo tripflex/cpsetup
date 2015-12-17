@@ -1,5 +1,5 @@
 #!/bin/bash
-version="1.3.0";
+version="1.3.1";
 cpSetup_banner() {
 	echo -n "${GREEN}"
 	cat <<"EOT"
@@ -28,8 +28,8 @@ echo -n "${NORMAL}"
 #                     cPanel Server Setup & Hardening Script
 # ------------------------------------------------------------------------------
 # @author Myles McNamara
-# @date 6.2.2015
-# @version 1.3.0
+# @date 12.16.2015
+# @version 1.3.1
 # @source https://github.com/tripflex/cpsetup
 # ------------------------------------------------------------------------------
 # @usage ./cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)]
