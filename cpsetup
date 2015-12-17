@@ -364,11 +364,17 @@ function installModCloudFlare(){
 }
 
 function addCloudFlareIPv6SubnetsToCSF(){
+	# Add IPs to csf.ignore for LFD
 	wget --output-document=- "https://www.cloudflare.com/ips-v6" >> /etc/csf/csf.ignore
+	# Add IPs to csf.allow for Firewall
+	wget --output-document=- "https://www.cloudflare.com/ips-v6" >> /etc/csf/csf.allow
 }
 
 function addCloudFlareIPv4SubnetsToCSF(){
+	# Add IPs to csf.ignore for LFD
 	wget --output-document=- "https://www.cloudflare.com/ips-v4" >> /etc/csf/csf.ignore
+	# Add IPs to csf.allow for Firewall
+	wget --output-document=- "https://www.cloudflare.com/ips-v4" >> /etc/csf/csf.allow
 }
 
 function configureMemCached(){
