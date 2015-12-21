@@ -1,5 +1,5 @@
 #!/bin/bash
-version="1.3.1";
+version="1.3.2";
 cpSetup_banner() {
 	echo -n "${GREEN}"
 	cat <<"EOT"
@@ -28,8 +28,8 @@ echo -n "${NORMAL}"
 #                     cPanel Server Setup & Hardening Script
 # ------------------------------------------------------------------------------
 # @author Myles McNamara
-# @date 12.16.2015
-# @version 1.3.1
+# @date 12.20.2015
+# @version 1.3.2
 # @source https://github.com/tripflex/cpsetup
 # ------------------------------------------------------------------------------
 # @usage ./cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)]
@@ -290,6 +290,14 @@ function installMailQueue(){
 	sh install.sh
 }
 
+function installModSecurityControl(){
+	cd $builddir
+	wget http://download.configserver.com/cmc.tgz
+	tar -xzf cmc.tgz
+	cd cmc
+	sh install.sh
+}
+
 function installFirewall(){
 	cd $builddir
 	wget http://www.configserver.com/free/csf.tgz
@@ -390,6 +398,15 @@ function configureMemCached(){
 	echo 'OPTIONS="-s /var/run/memcached/memcached.sock"' >> /etc/sysconfig/memcached
 	# Add railgun user to memcached group
 	usermod -a -G memcached railgun
+
+	if [ ! -d "/var/run/memcached" ];then
+		mkdir /var/run/memcached
+		chown memcached.memcached /var/run/memcached
+	fi
+
+	service memcached stop
+	service memcached start
+
 	chmod 770 /var/run/memcached/memcached.sock
 
 	echo -e "\n${NORMAL}If you want to change, review, or update memcached, use the ${YELLOW}/etc/sysconfig/memcached${NORMAL} file."
@@ -398,8 +415,8 @@ function configureMemCached(){
 function installCloudFlarePackageRepo(){
 
 	cd $builddir
-
-	RHEL_VERSION=$(rpm -q --qf "%{VERSION}" $(rpm -q --whatprovides redhat-release) );
+	# Get RHEL major version number
+	RHEL_VERSION=$(rpm -q --qf "%{VERSION}" "$(rpm -q --whatprovides redhat-release)" | grep -Eo '^[0-9]*' );
 	PACKAGE_URL="http://pkg.cloudflare.com/cloudflare-release-latest.el${RHEL_VERSION}.rpm"
 
 	sudo rpm -ivh $PACKAGE_URL
@@ -667,6 +684,11 @@ if stepcheck "install ConfigServer Firewall"; then
 	installFirewall
 fi
 
+if stepcheck "install ConfigServer ModSecurity Control"; then
+	headerBlock "Installing ConfigServer ModSecurity Control, please wait..."
+	installModSecurityControl
+fi
+
 if stepcheck "install R-fx Malware Detect"; then
 	headerBlock "Installing R-fx Malware Detect, please wait..."
 	installMalDetect
@@ -771,7 +793,7 @@ if stepcheck "configure memcached for RailGun using sockets"; then
 	headerBlock "Creating /etc/sysconfig/memcached configuration file, please wait ..."
 	configureMemCached
 	headerBlock "Restarting memcached service ..."
-	/etc/init.d/memcached restart
+	service memcached restart
 fi
 
 if stepcheck "configure CloudFlare RailGun"; then
