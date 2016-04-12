@@ -1,7 +1,7 @@
 cpSetup
 =======
 
-<strong>Author:</strong> Myles McNamara<br/><strong>Version:</strong> 1.3.2<br/><strong>Last Update:</strong> December 20, 2015
+<strong>Author:</strong> Myles McNamara<br/><strong>Version:</strong> 1.3.3<br/><strong>Last Update:</strong> April 12, 2016
 
 <strong>cpsetup</strong> is a custom bash/shell script to setup and harden/configure cPanel CentOS/RHEL server with a wide range of applications, plugins, and modules. This script will also install cPanel if it's not already installed.
 
