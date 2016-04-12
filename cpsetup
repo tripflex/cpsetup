@@ -408,7 +408,6 @@ function configureMemCached(){
 	service memcached start
 
 	chmod 770 /var/run/memcached/memcached.sock
-
 	echo -e "\n${NORMAL}If you want to change, review, or update memcached, use the ${YELLOW}/etc/sysconfig/memcached${NORMAL} file."
 }
 
@@ -794,6 +793,10 @@ if stepcheck "configure memcached for RailGun using sockets"; then
 	configureMemCached
 	headerBlock "Restarting memcached service ..."
 	service memcached restart
+	headerBlock "Setting permissions on /var/run/memcached/memcached.sock to 770"
+	chmod 770 /var/run/memcached/memcached.sock
+	headerBlock "Adding RailGun user to memcached group"
+	usermod -a -G memcached railgun
 fi
 
 if stepcheck "configure CloudFlare RailGun"; then
