@@ -565,7 +565,7 @@ function promptForCloudFlareConfig(){
 		echo -e "\nExisting value: ${BLUE}${cloudflare_company_name}${NORMAL} \n"
 		echo -e "${MAGENTA}Enter your Hosting Company Name if different from existing${MAGENTA}:${NORMAL} "
 		read custom_cloudflare_company_name
-		if [ $custom_cloudflare_company_name ]; then cloudflare_company_name=$custom_cloudflare_company_name
+		if [ $custom_cloudflare_company_name ]; then cloudflare_company_name="${custom_cloudflare_company_name}"
 		fi
 
 		echo -e "\nUsing ${BLUE}${cloudflare_company_name}${NORMAL} as CloudFlare Company Name\n"
