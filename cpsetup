@@ -367,8 +367,8 @@ function installModCloudFlare(){
 	cd $builddir
 	curl -k -L https://github.com/cloudflare/CloudFlare-CPanel/tarball/master > cloudflare.tar.gz
 	tar -zxvf cloudflare.tar.gz
-	cd cloudflare-CloudFlare-*/cloudflare/
-	./install_cf ${cloudflare_api_key} mod_cf "${cloudflare_company_name}"
+	cd cloudflare-CloudFlare-*/
+	./cloudflare.install.sh -k ${cloudflare_api_key} -n "${cloudflare_company_name}"
 }
 
 function addCloudFlareIPv6SubnetsToCSF(){
