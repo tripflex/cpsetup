@@ -67,6 +67,20 @@ chmod +x cpsetup
 </tr>
 </table>
 
+Depreciated Functions/Installs (*)
+----------------
+
+| Name | Reason |
+|---|---|
+| Account DNS Check | Reported to no longer work on CentOS 7, or WHM > 11.52 |
+| PHP.INI Manager   | WHM now has built in handling, and unsure of status of plugin |
+| Clean Backups     | No longer works or updated? |
+
+> I decided to remove these from the auto install process because I either do not know the status of them (compatibility wise) with WHM,
+> they are not compatible with latest release, or because the developers either do not provide ANY changelog, or even if they do,
+> they don't even date the versions, which IMO is sloppy dev work, and as such, they do not belong in the auto install process.
+
+
 Available Arguments
 -------------------
 
