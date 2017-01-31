@@ -32,12 +32,13 @@ chmod +x cpsetup
 <li>Install <a href="http://configserver.com/cp/cmq.html" target="_blank">ConfigServer MailQueues</a></li>
 <li>Install <a href="http://configserver.com/cp/csf.html" target="_blank">ConfigServer Firewall</a></li>
 <li>Install <a href="http://configserver.com/cp/cmc.html" target="_blank">ConfigServer ModSecurity Control</a></li>
+<li>Install <a href="http://configserver.com/cp/cxs.html" target="_blank">ConfigServer Exploit Scanner</a></li>
 <li>Install <a href="https://www.rfxn.com/projects/linux-malware-detect/" target="_blank">R-fx Malware Detect</a></li>
-<li>Install <a href="https://www.ndchost.com/cpanel-whm/addons/accountdnscheck/" target="_blank">Account DNS Check</a></li>
+<li>Install <a href="https://www.ndchost.com/cpanel-whm/addons/accountdnscheck/" target="_blank">Account DNS Check</a>* (depreciated)</li>
 <li>Install <a href="http://www.softaculous.com/" target="_blank">Softaculous</a></li>
 <li>Install <a href="https://www.ndchost.com/cpanel-whm/addons/watchmysql/" target="_blank">WatchMySQL</a></li>
-<li>Install <a href="http://how2.be/en/community/phpinimgr/" target="_blank">PHP.ini Manager</a></li>
-<li>Install <a href="https://www.ndchost.com/cpanel-whm/addons/cleanbackups/" target="_blank">Clean Backups</a></li>
+<li>Install <a href="http://how2.be/en/community/phpinimgr/" target="_blank">PHP.ini Manager</a>* (depreciated)</li>
+<li>Install <a href="https://www.ndchost.com/cpanel-whm/addons/cleanbackups/" target="_blank">Clean Backups</a>* (depreciated)</li>
 <li>Install <a href="https://github.com/major/MySQLTuner-perl" target="_blank">MySQL Tuner</a></li>
 <li>Install <a href="https://www.cloudflare.com/static/media/pdf/cloudflare-cpanel-installation-activation-guide.pdf" target="_blank">cPanel mod_cloudflare</a> (<a href="https://github.com/tripflex/cloudflarecp" target="_blank">cloudflarecp</a>)</li>
 <li>Install <a href="https://www.cloudflare.com/railgun" target="_blank">CloudFlare RailGun</a></li>
@@ -58,6 +59,7 @@ chmod +x cpsetup
 <ul>
 <li>You tell me, open up an issue and suggest a new feature!</li>
 </ul>
+<strong>* (depreciated)</strong> -- this has been removed from auto install process (still available via manual install with `--run`) for one reason or another.  Either it's no longer support, does not work on newer versions of WHM/CentOS, etc.
 </td>
 <td width="40%">
 <p align="center"><img src="screenshot.png"></p>
