@@ -205,7 +205,7 @@ function stepcheck {
 
 function installCXS(){
 	cd ~
-	wget https://download.configserver.com/cxsinstaller.tgz --no-check-certificate
+	wget https://download.configserver.com/cxsinstaller.tgz
 	tar -xzf cxsinstaller.tgz
 	perl cxsinstaller.pl
 	rm -fv cxsinstaller.*
@@ -692,6 +692,12 @@ if stepcheck "install R-fx Malware Detect"; then
 	headerBlock "Installing R-fx Malware Detect, please wait..."
 	installMalDetect
 fi
+
+if stepcheck "install ConfigServer Exploit Scanner (requires license)"; then
+	headerBlock "Installing ConfigServer Exploit Scanner, please wait..."
+	installCXS
+fi
+
 echo -e "\n";
 echo -n "${YELLOW}!! HEADS UP !!${RED}( You SHOULD do this NOW ): ${NORMAL}You must have ${YELLOW}ioncube${NORMAL} enabled in ${YELLOW}WHM${NORMAL} under ${BLUE}Tweak Settings${NORMAL} > ${MAGENTA}cPanel PHP Loader${NORMAL} or Softaculous will not install"
 echo -e "\n";
@@ -710,19 +716,9 @@ if stepcheck "install WatchMySQL"; then
 	installWatchMySQL
 fi
 
-if stepcheck "install PHP.INI Manager"; then
-	headerBlock "Installing PHP.INI Manager, please wait..."
-	installPHPiniManager
-fi
-
-if stepcheck "install Clean Backups"; then
-	headerBlock "Installing Clean Backups, please wait..."
-	installCleanBackups
-fi
-
 if stepcheck "install MySQL Tuner"; then
 	headerBlock "Installing MySQL Tuner, please wait..."
-	installCleanBackups
+	installMySQLTuner
 fi
 
 if stepcheck "harden server configuration"; then
