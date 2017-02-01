@@ -300,7 +300,7 @@ function installModSecurityControl(){
 
 function installFirewall(){
 	cd $builddir
-	wget http://www.configserver.com/free/csf.tgz
+	wget https://download.configserver.com/csf.tgz
 	tar -xzf csf.tgz
 	cd csf
 	sh install.sh
@@ -312,7 +312,7 @@ function installFirewall(){
 
 function installMalDetect(){
 	cd $builddir
-	wget --no-check-certificate https://www.rfxn.com/downloads/maldetect-current.tar.gz
+	wget https://www.rfxn.com/downloads/maldetect-current.tar.gz
 	tar -xzf maldetect-*.tar.gz
 	rm -rf maldetect-*.tar.gz
 	cd maldetect*
