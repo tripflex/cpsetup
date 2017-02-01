@@ -693,6 +693,17 @@ function installAfterLogicWebmailLite(){
 	cd webmail-panel*
 	chmod a+x installer
 	bash installer -t lite -a install
+
+	server_hostname=$(hostname);
+
+	echo -e "\n${WHITEBG}${BLACK}!! HEADS UP !! You MUST login to webmail using an active email account on your server, and then go to this URL: ${NORMAL}\n";
+	echo -e "\n${WHITEBG}${BLACK} http://${server_hostname}:2095/3rdparty/afterlogic/adminpanel/index.php: ${NORMAL}\n";
+	echo -e "\n${WHITEBG}${BLACK} And login with these credentials: ${NORMAL}\n";
+	echo -e "\n${BLUE}Username: ${NORMAL}mailadm\n";
+	echo -e "\n${BLUE}Password: ${NORMAL}12345\n";
+	echo -e "\n${WHITEBG}${BLACK} !!! Once you login to admin webmail interface make SURE you change the password!!!! ${NORMAL}\n";
+	echo -e "\n${WHITEBG}${BLACK} !!! If you do not ANYBODY will be able to login to the webmail admin interface!!!! ${NORMAL}\n";
+	read -p "Press [Enter] key to confirm you understand and continue..."
 }
 
 function installCloudFlareRailGun(){
