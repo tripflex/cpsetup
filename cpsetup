@@ -236,7 +236,7 @@ function installClamAV(){
 	sed -i -e 's/clamd.socket/clamd/g' /usr/local/etc/clamd.conf
 	ldconfig
 	headerBlock "Updating ClamAV definition files..."
-	freshclam ${verbose}
+	/usr/local/bin/freshclam ${verbose}
 	curl http://download.configserver.com/clamd -o /etc/init.d/clamd
 	chown root:root /etc/init.d/clamd
 	chmod +x /etc/init.d/clamd
@@ -647,7 +647,7 @@ function promptForRailGunConfig(){
 		fi
 
 		# Set to host if nothing set
-		if [ $custom_railgun_host === 'YOUR_PUBLIC_IP_OR_HOSTNAME' ]; then
+		if [ $custom_railgun_host = 'YOUR_PUBLIC_IP_OR_HOSTNAME' ]; then
 			railgun_host=$(hostname);
 		fi
 
