@@ -351,7 +351,7 @@ function installMailScanner(){
 
 	echo -e "\nYou can now check the files in /usr/mailscanner/etc/rules/*.rules and modify them if desired. There are instructions and examples in the README and EXAMPLES files in that directory";
 	read -p "Press [Enter] to continue..."
-	
+
 	# MailScanner won't be scanning for much until you configure it for the domains on your server. We have another handy script that can keep your MailScanner installation in sync with your cPanel /etc/localdomains file.
 	/usr/mscpanel/mscpanel.pl -i
 	rm -rf msinstall/
@@ -605,7 +605,8 @@ function promptForCloudFlareConfig(){
 		echo -e "\nExisting value: ${BLUE}${cloudflare_api_key}${NORMAL} \n"
 		echo -e "${MAGENTA}Enter your CloudFlare API Key if different from existing${MAGENTA}:${NORMAL} "
 		read custom_cloudflare_api_key
-		if [ $custom_cloudflare_api_key ]; then cloudflare_api_key=$custom_cloudflare_api_key
+		if [ $custom_cloudflare_api_key ]; then
+			cloudflare_api_key=$custom_cloudflare_api_key
 		fi
 
 		echo -e "\nUsing ${BLUE}${cloudflare_api_key}${NORMAL} as CloudFlare API Key\n"
@@ -613,7 +614,8 @@ function promptForCloudFlareConfig(){
 		echo -e "\nExisting value: ${BLUE}${cloudflare_company_name}${NORMAL} \n"
 		echo -e "${MAGENTA}Enter your Hosting Company Name if different from existing${MAGENTA}:${NORMAL} "
 		read custom_cloudflare_company_name
-		if [ $custom_cloudflare_company_name ]; then cloudflare_company_name="${custom_cloudflare_company_name}"
+		if [ $custom_cloudflare_company_name ]; then
+			cloudflare_company_name="${custom_cloudflare_company_name}"
 		fi
 
 		echo -e "\nUsing ${BLUE}${cloudflare_company_name}${NORMAL} as CloudFlare Company Name\n"
@@ -630,7 +632,8 @@ function promptForRailGunConfig(){
 		echo -e "\nExisting value: ${BLUE}${railgun_token}${NORMAL} \n"
 		echo -e "${MAGENTA}Enter your CloudFlare RailGun Token if different from existing (find this at https://partners.cloudflare.com)${MAGENTA}:${NORMAL} "
 		read custom_railgun_token
-		if [ $custom_railgun_token ]; then railgun_token=$custom_railgun_token
+		if [ $custom_railgun_token ]; then
+			railgun_token=$custom_railgun_token
 		fi
 
 		echo -e "\nUsing ${BLUE}${railgun_token}${NORMAL} as CloudFlare RailGun Token\n"
@@ -639,7 +642,13 @@ function promptForRailGunConfig(){
 		echo -e "\nFor reference, your hostname is ${BLUE}${server_hostname}${NORMAL}, your IP is ${BLUE}${server_ip}${NORMAL}\n"
 		echo -e "${MAGENTA}Enter your CloudFlare RailGun Host if different from existing (should be servers IP or hostname)${MAGENTA}:${NORMAL} "
 		read custom_railgun_host
-		if [ $custom_railgun_host ]; then railgun_host=$custom_railgun_host
+		if [ $custom_railgun_host ]; then
+			railgun_host=$custom_railgun_host
+		fi
+
+		# Set to host if nothing set
+		if [ $custom_railgun_host === 'YOUR_PUBLIC_IP_OR_HOSTNAME' ]; then
+			railgun_host=$(hostname);
 		fi
 
 		echo -e "\nUsing ${BLUE}${railgun_host}${NORMAL} as CloudFlare RailGun Host\n"
