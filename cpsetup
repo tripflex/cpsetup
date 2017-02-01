@@ -684,6 +684,17 @@ function configureMemCachedRailGunSockets(){
 	usermod -a -G memcached railgun
 }
 
+function installAfterLogicWebmailLite(){
+	# Make sure 3rd party perl modules is installed
+	perl -MCPAN -e 'install YAML::Syck'
+	cd $builddir;
+	wget http://www.afterlogic.com/download/webmail-panel-installer.tar.gz
+	tar -xzvf webmail-panel-installer.tar.gz
+	cd webmail-panel*
+	chmod a+x installer
+	bash installer -t lite -a install
+}
+
 function installCloudFlareRailGun(){
 	headerBlock "Attempting to install MemCached, please wait..."
 	yum install memcached -y
@@ -883,6 +894,10 @@ fi
 
 if stepcheck "configure CloudFlare RailGun"; then
 	configureCloudFlareRailGun
+fi
+
+if stepcheck "install AfterLogic WebMail Lite"; then
+	installAfterLogicWebmailLite
 fi
 
 headerBlock "Cleaning up build files, please wait..."
