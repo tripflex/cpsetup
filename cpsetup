@@ -706,6 +706,10 @@ function installAfterLogicWebmailLite(){
 	read -p "Press [Enter] key to confirm you understand and continue..."
 }
 
+function installLetsEncryptAutoSSL(){
+	/scripts/install_lets_encrypt_autossl_provider
+}
+
 function installCloudFlareRailGun(){
 	headerBlock "Attempting to install MemCached, please wait..."
 	yum install memcached -y
@@ -909,6 +913,10 @@ fi
 
 if stepcheck "install AfterLogic WebMail Lite"; then
 	installAfterLogicWebmailLite
+fi
+
+if stepcheck "install Lets Encrypt for AutoSSL"; then
+	installLetsEncryptAutoSSL
 fi
 
 headerBlock "Cleaning up build files, please wait..."
