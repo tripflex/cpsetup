@@ -338,11 +338,20 @@ function installMailScanner(){
 	sh install.sh
 	cd $builddir
 	# WHM > Tweak Settings > Uncheck "SpamAssassin Spam Filter" and "SpamAssassin Spam Box"
-	# WHM > Service Manager > Uncheck both boxes for "spamd" and click "Save"
+	# WHM > Service Manager > Uncheck both boxes for spamd and click Save
 	# Feature Manager > Edit the feature list "disabled" and uncheck "SpamAssassin" and "SpamAssassin Spam Box"
 
-	# You can then check the files in /usr/mailscanner/etc/rules/*.rules and modify them if desired. There are instructions and examples in the README and EXAMPLES files in that directory
+	sed -i -e 's/skipspamassassin=1/skipspamassassin=0/g' /var/cpanel/cpanel.config
+	# Must be ran after updating tweak settings file
+	/usr/local/cpanel/whostmgr/bin/whostmgr2 --updatetweaksettings > /dev/null
 
+	echo -e "\n${WHITEBG}${BLACK}!! HEADS UP !! You now need to go to WHM > Service Manager > Uncheck both boxes for spamd and click Save ${NORMAL}\n";
+	echo -e "\n${WHITEBG}${BLACK}!! HEADS UP !! You now need to Feature Manager > Edit the feature list 'disabled' and uncheck 'SpamAssassin' and 'SpamAssassin Spam Box' ${NORMAL}\n";
+	read -p "Press [Enter] to confirm you have completed this..."
+
+	echo -e "\nYou can now check the files in /usr/mailscanner/etc/rules/*.rules and modify them if desired. There are instructions and examples in the README and EXAMPLES files in that directory";
+	read -p "Press [Enter] to continue..."
+	
 	# MailScanner won't be scanning for much until you configure it for the domains on your server. We have another handy script that can keep your MailScanner installation in sync with your cPanel /etc/localdomains file.
 	/usr/mscpanel/mscpanel.pl -i
 	rm -rf msinstall/
@@ -512,7 +521,6 @@ function configureCSF(){
 	sed -i -e 's/LF_SCRIPT_ALERT = "0"/LF_SCRIPT_ALERT = "1"/g' /etc/csf/csf.conf
 	sed -i -e 's/SYSLOG_CHECK = "0"/SYSLOG_CHECK = "1800"/g' /etc/csf/csf.conf
 	sed -i -e 's/PT_ALL_USERS = "0"/PT_ALL_USERS = "1"/g' /etc/csf/csf.conf
-
 }
 
 function configureSSH(){
