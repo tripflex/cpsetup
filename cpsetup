@@ -1,5 +1,5 @@
 #!/bin/bash
-version="1.3.3";
+version="1.4.0";
 cpSetup_banner() {
 	echo -n "${GREEN}"
 	cat <<"EOT"
@@ -28,13 +28,13 @@ echo -n "${NORMAL}"
 #                     cPanel Server Setup & Hardening Script
 # ------------------------------------------------------------------------------
 # @author Myles McNamara
-# @date 12.20.2015
-# @version 1.3.2
+# @date 02.01.2017
+# @version 1.4.0
 # @source https://github.com/tripflex/cpsetup
 # ------------------------------------------------------------------------------
 # @usage ./cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)]
 # ------------------------------------------------------------------------------
-# @copyright Copyright (C) 2015 Myles McNamara
+# @copyright Copyright (C) 2017 Myles McNamara
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -54,7 +54,7 @@ echo -n "${NORMAL}"
 #
 # Define help function
 function help(){
-    echo "cpsetup - cPanel setup script";
+    echo "cpsetup - sMyles cPanel setup script v${version}";
     echo "Usage example:";
     echo "cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)] [(-m|--menu)] [(-r|--run) value] [(-R|--functions)]";
     echo "Options:";

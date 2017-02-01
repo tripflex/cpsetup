@@ -1,7 +1,7 @@
 cpSetup
 =======
 
-<strong>Author:</strong> Myles McNamara<br/><strong>Version:</strong> 1.3.3<br/><strong>Last Update:</strong> April 12, 2016
+<strong>Author:</strong> Myles McNamara<br/><strong>Version:</strong> 1.4.0<br/><strong>Last Update:</strong> February 1, 2017
 
 <strong>cpsetup</strong> is a custom bash/shell script to setup and harden/configure cPanel CentOS/RHEL server with a wide range of applications, plugins, and modules. This script will also install cPanel if it's not already installed.
 
@@ -28,10 +28,14 @@ chmod +x cpsetup
 <h4>Features Include:</h4>
 <ul>
     <li>Install ClamAV from Source</li>
+    <li>Install <a href="https://documentation.cpanel.net/display/CKB/The+Let's+Encrypt+Plugin" target="_blank">Let's Encrypt for cPanel AutoSSL</a></li>
+    <li>Install <a href="http://www.afterlogic.org/docs/webmail-lite/installation/install-on-cpanel" target="_blank">AfterLogic WebMail Lite</a></li>
+    <li>Install <a href="http://configserver.com/cp/cse.html" target="_blank">ConfigServer Explorer</a></li>
     <li>Install <a href="http://configserver.com/cp/cmm.html" target="_blank">ConfigServer MailManage</a></li>
     <li>Install <a href="http://configserver.com/cp/cmq.html" target="_blank">ConfigServer MailQueues</a></li>
     <li>Install <a href="http://configserver.com/cp/csf.html" target="_blank">ConfigServer Firewall</a></li>
     <li>Install <a href="http://configserver.com/cp/cmc.html" target="_blank">ConfigServer ModSecurity Control</a></li>
+    <li>Install <a href="https://www.configserver.com/free/mailscanner.html" target="_blank">ConfigServer MailScanner</a></li>
     <li>Install <a href="http://configserver.com/cp/cxs.html" target="_blank">ConfigServer Exploit Scanner</a></li>
     <li>Install <a href="https://www.rfxn.com/projects/linux-malware-detect/" target="_blank">R-fx Malware Detect</a></li>
     <li>Install <a href="http://www.softaculous.com/" target="_blank">Softaculous</a></li>
@@ -149,6 +153,8 @@ cPanel Tweak Settings Updates
 | Referrer Safety Check                | Disabled       | Enabled   |
 | Hide Login PW from CGI Scripts       | Disabled       | Enabled   |
 | Max Emails Account Can Send Per Hour | Unlimited      | 199       |
+| Restrict outgoing SMTP to root, exim, and mailman | Enabled | Disabled |
+| Proxy Subdomains (whm.example.com, etc)| Enabled | Disabled |
 
 MySQL Settings Updates
 ----------------------
@@ -197,3 +203,27 @@ CloudFlare RailGun MemCached Configurations
 ### Caution
 
 Use at your own risk, if you don't know what you're doing you should probably not be using this script. Myself and any contributors to this project take absolutely no responsibility for anything you do with this script. I **strongly** recommend reading the script so you understand what it does before using.
+
+# Change Log
+
+## [1.4.0](https://github.com/tripflex/cpsetup/tree/1.4.0) (2017-02-01)
+[Full Changelog](https://github.com/tripflex/cpsetup/compare/1.3.3...1.4.0)
+
+**Implemented enhancements:**
+
+- Added AfterLogic WebMail Lite installer
+- Added Let's Encrypt AutoSSL for cPanel installer
+- Added import for CloudFlare new public key
+- Added Disable Proxy Subdomains (whm.example.com, etc) to harden config call
+- Added Disable SMTP Restrictions to harden config call (when using CSF this should NOT be enabled)
+- Use hostname if nothing set at prompt or in file for RailGun Host
+- Moved CloudFlare RailGun install process and config process to separate functions
+
+**Bug Fixes:**
+- Fixed/Updated URL to download ConfigServer Firewall install file
+- Fixed incorrect function call for MySQL Tuner install
+
+**Other:**
+- Removed prompt to install CleanBackups
+- Removed prompt to install PHP.ini Manager
+- Removed prompt to install Account DNS Check
