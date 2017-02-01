@@ -331,8 +331,6 @@ function installMalDetect(){
 
 function installMailScanner(){
 	cd $builddir
-
-
 	wget https://download.configserver.com/msinstall.tar.gz
 	tar -xzf msinstall.tar.gz
 	rm -rf msinstall.tar.gz
@@ -350,6 +348,7 @@ function installMailScanner(){
 	rm -rf msinstall/
 
 	if stepcheck "setup daily MailScanner cronjob to keep cPanel /etc/localdomains in sync?"; then
+		headerBlock "Adding MailScanner daily cron job ..."
 		installMailScannerCron
 	fi
 }
@@ -546,6 +545,7 @@ function configureTweakSettings(){
 	sed -i -e 's/referrerblanksafety=0/referrerblanksafety=1/g' /var/cpanel/cpanel.config
 	sed -i -e 's/referrersafety=0/referrersafety=1/g' /var/cpanel/cpanel.config
 	sed -i -e 's/cgihidepass=0/cgihidepass=1/g' /var/cpanel/cpanel.config
+	sed -i -e 's/proxysubdomains=1/proxysubdomains=0/g' /var/cpanel/cpanel.config
 	echo "maxemailsperhour=199" >> /var/cpanel/cpanel.config
 	# Must be ran after updating tweak settings file
 	/usr/local/cpanel/whostmgr/bin/whostmgr2 --updatetweaksettings > /dev/null
@@ -741,11 +741,6 @@ fi
 if stepcheck "install ConfigServer Exploit Scanner (requires license)"; then
 	headerBlock "Installing ConfigServer Exploit Scanner, please wait..."
 	installCXS
-fi
-
-if stepcheck "install ConfigServer Mail Scanner (free)"; then
-	headerBlock "Installing ConfigServer Mail Scanner, please wait..."
-	installMailScanner
 fi
 
 echo -e "\n";
