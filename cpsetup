@@ -282,6 +282,16 @@ function installMailManage(){
 	rm -Rfv /usr/src/cmm*
 }
 
+function installExplorer(){
+	cd /usr/src
+	rm -fv /usr/src/cse.tgz
+	wget https://download.configserver.com/cse.tgz
+	tar -xzf cse.tgz
+	cd cse
+	sh install.sh
+	rm -Rfv /usr/src/cse*
+}
+
 function installMailQueue(){
 	cd $builddir
 	wget http://download.configserver.com/cmq.tgz
@@ -317,6 +327,35 @@ function installMalDetect(){
 	rm -rf maldetect-*.tar.gz
 	cd maldetect*
 	sh install.sh
+}
+
+function installMailScanner(){
+	cd $builddir
+
+
+	wget https://download.configserver.com/msinstall.tar.gz
+	tar -xzf msinstall.tar.gz
+	rm -rf msinstall.tar.gz
+	cd msinstall/
+	sh install.sh
+	cd $builddir
+	# WHM > Tweak Settings > Uncheck "SpamAssassin Spam Filter" and "SpamAssassin Spam Box"
+	# WHM > Service Manager > Uncheck both boxes for "spamd" and click "Save"
+	# Feature Manager > Edit the feature list "disabled" and uncheck "SpamAssassin" and "SpamAssassin Spam Box"
+
+	# You can then check the files in /usr/mailscanner/etc/rules/*.rules and modify them if desired. There are instructions and examples in the README and EXAMPLES files in that directory
+
+	# MailScanner won't be scanning for much until you configure it for the domains on your server. We have another handy script that can keep your MailScanner installation in sync with your cPanel /etc/localdomains file.
+	/usr/mscpanel/mscpanel.pl -i
+	rm -rf msinstall/
+
+	if stepcheck "setup daily MailScanner cronjob to keep cPanel /etc/localdomains in sync?"; then
+		installMailScannerCron
+	fi
+}
+
+function installMailScannerCron(){
+	(crontab -l 2>/dev/null; echo "0 0 * * * /usr/mscpanel/mscpanel.pl > /dev/null 2>&1") | crontab -
 }
 
 function installSoftaculous(){
@@ -413,12 +452,13 @@ function configureMemCached(){
 
 function installCloudFlarePackageRepo(){
 
+	rpm --import https://pkg.cloudflare.com/pubkey.gpg
 	cd $builddir
 	# Get RHEL major version number
 	RHEL_VERSION=$(rpm -q --qf "%{VERSION}" "$(rpm -q --whatprovides redhat-release)" | grep -Eo '^[0-9]*' );
 	PACKAGE_URL="http://pkg.cloudflare.com/cloudflare-release-latest.el${RHEL_VERSION}.rpm"
 
-	sudo rpm -ivh $PACKAGE_URL
+	rpm -ivh $PACKAGE_URL
 }
 
 function hardenServerConfig(){
@@ -683,9 +723,14 @@ if stepcheck "install ConfigServer Firewall"; then
 	installFirewall
 fi
 
-if stepcheck "install ConfigServer ModSecurity Control"; then
+if stepcheck "install ConfigServer ModSecurity Control (WHM already has this builtin)"; then
 	headerBlock "Installing ConfigServer ModSecurity Control, please wait..."
 	installModSecurityControl
+fi
+
+if stepcheck "install ConfigServer Explorer"; then
+	headerBlock "Installing ConfigServer Explorer, please wait..."
+	installExplorer
 fi
 
 if stepcheck "install R-fx Malware Detect"; then
@@ -696,6 +741,11 @@ fi
 if stepcheck "install ConfigServer Exploit Scanner (requires license)"; then
 	headerBlock "Installing ConfigServer Exploit Scanner, please wait..."
 	installCXS
+fi
+
+if stepcheck "install ConfigServer Mail Scanner (free)"; then
+	headerBlock "Installing ConfigServer Mail Scanner, please wait..."
+	installMailScanner
 fi
 
 echo -e "\n";
