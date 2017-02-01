@@ -546,6 +546,7 @@ function configureTweakSettings(){
 	sed -i -e 's/referrersafety=0/referrersafety=1/g' /var/cpanel/cpanel.config
 	sed -i -e 's/cgihidepass=0/cgihidepass=1/g' /var/cpanel/cpanel.config
 	sed -i -e 's/proxysubdomains=1/proxysubdomains=0/g' /var/cpanel/cpanel.config
+	sed -i -e 's/smtpmailgidonly=1/smtpmailgidonly=0/g' /var/cpanel/cpanel.config
 	echo "maxemailsperhour=199" >> /var/cpanel/cpanel.config
 	# Must be ran after updating tweak settings file
 	/usr/local/cpanel/whostmgr/bin/whostmgr2 --updatetweaksettings > /dev/null
