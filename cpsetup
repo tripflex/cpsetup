@@ -686,7 +686,7 @@ function configureMemCachedRailGunSockets(){
 
 function installAfterLogicWebmailLite(){
 	# Make sure 3rd party perl modules is installed
-	perl -MCPAN -e 'install YAML::Syck'
+	cpan YAML::Syck
 	cd $builddir;
 	wget http://www.afterlogic.com/download/webmail-panel-installer.tar.gz
 	tar -xzvf webmail-panel-installer.tar.gz
