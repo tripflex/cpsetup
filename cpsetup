@@ -475,9 +475,9 @@ function hardenServerConfig(){
 	promptForRootForwardEmail
 	headerBlock "Securing the server with configuration tweaks, please wait..."
 
-	# Check server startup for portreserve
-	service portreserve stop
-	chkconfig portreserve off
+	# Check server startup for portreserve, use 2> /dev/null to prevent warning output (if not installed or enabled)
+	service portreserve stop 2> /dev/null
+	chkconfig portreserve off 2> /dev/null
 
 	configureApache
 	configureCSF
@@ -531,7 +531,7 @@ function configureCSF(){
 function configureSSH(){
 	sed -i -e "s/#Port 22/Port ${sshport}/g" /etc/ssh/sshd_config
 	sed -i -e 's/#UseDNS yes/UseDNS no/g' /etc/ssh/sshd_config
-	/etc/init.d/sshd restart
+	service sshd restart
 }
 
 function configurecPanel(){
@@ -539,6 +539,8 @@ function configurecPanel(){
 	perl -I/usr/local/cpanel -MCpanel::LoginProfile -le 'print [Cpanel::LoginProfile::install_profile('limits')]->[1];'
 	# Compiler access
 	chmod 750 /usr/bin/gcc
+	# Enable PHP-FPM Service for cPanel
+	whmapi1 configureservice service=cpanel_php_fpm enabled=1 monitored=1
 	# Root Forwarder
 	if [ ! -f /root/.forward ]; then
     	echo $rootemail > /root/.forward
