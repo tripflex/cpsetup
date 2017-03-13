@@ -541,6 +541,8 @@ function configurecPanel(){
 	chmod 750 /usr/bin/gcc
 	# Enable PHP-FPM Service for cPanel
 	whmapi1 configureservice service=cpanel_php_fpm enabled=1 monitored=1
+	# Check Background Process Killer
+	whmapi1 configurebackgroundprocesskiller processes_to_kill=BitchX processes_to_kill-0=bnc processes_to_kill-1=eggdrop processes_to_kill-2=generic-sniffers processes_to_kill-3=guardservices processes_to_kill-4=ircd processes_to_kill-5=psyBNC processes_to_kill-6=ptlink processes_to_kill-7=services
 	# Root Forwarder
 	if [ ! -f /root/.forward ]; then
     	echo $rootemail > /root/.forward
