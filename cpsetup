@@ -1,5 +1,5 @@
 #!/bin/bash
-version="1.4.0";
+version="1.5.0";
 cpSetup_banner() {
 	echo -n "${GREEN}"
 	cat <<"EOT"
@@ -28,8 +28,8 @@ echo -n "${NORMAL}"
 #                     cPanel Server Setup & Hardening Script
 # ------------------------------------------------------------------------------
 # @author Myles McNamara
-# @date 02.01.2017
-# @version 1.4.0
+# @date 05.22.2019
+# @version 1.5.0
 # @source https://github.com/tripflex/cpsetup
 # ------------------------------------------------------------------------------
 # @usage ./cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)]
@@ -218,7 +218,7 @@ function installClamAV(){
 	mkdir /usr/local/share/clamav
 	chown clamav:clamav /usr/local/share/clamav
 	cd ~
-	wget --no-check-certificate https://github.com/vrtadmin/clamav-devel/archive/clamav-0.98.7.tar.gz
+	wget --no-check-certificate https://github.com/Cisco-Talos/clamav-devel/archive/clamav-0.101.2.zip
 	tar -xzf clamav-*
 	rm -rf clamav-*.tar.gz
 	cd clamav*
@@ -237,11 +237,11 @@ function installClamAV(){
 	ldconfig
 	headerBlock "Updating ClamAV definition files..."
 	/usr/local/bin/freshclam ${verbose}
-	curl http://download.configserver.com/clamd -o /etc/init.d/clamd
-	chown root:root /etc/init.d/clamd
-	chmod +x /etc/init.d/clamd
-	chkconfig clamd on
-	service clamd restart
+	rm -fv /etc/init.d/clamd
+	curl https://download.configserver.com/clamd.service -o /usr/lib/systemd/system/clamd.service
+	systemctl daemon-reload
+	systemctl enable clamd.service
+	systemctl restart clamd.service
 	rm -rf /etc/chkserv.d/clamav
 	echo "service[clamav]=x,x,x,service clamd restart,clamd,root" >> /etc/chkserv.d/clamav
 	touch /var/log/clam-update.log

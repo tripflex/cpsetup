@@ -1,7 +1,7 @@
 cpSetup
 =======
 
-<strong>Author:</strong> Myles McNamara<br/><strong>Version:</strong> 1.4.0<br/><strong>Last Update:</strong> February 1, 2017
+<strong>Author:</strong> Myles McNamara<br/><strong>Version:</strong> 1.5.0<br/><strong>Last Update:</strong> May 22, 2019
 
 <strong>cpsetup</strong> is a custom bash/shell script to setup and harden/configure cPanel CentOS/RHEL server with a wide range of applications, plugins, and modules. This script will also install cPanel if it's not already installed.
 
@@ -27,7 +27,7 @@ chmod +x cpsetup
 <td width="60%">
 <h4>Features Include:</h4>
 <ul>
-    <li>Install ClamAV from Source</li>
+    <li>Install ClamAV from Source (CentOS 7+)</li>
     <li>Install <a href="https://documentation.cpanel.net/display/CKB/The+Let's+Encrypt+Plugin" target="_blank">Let's Encrypt for cPanel AutoSSL</a></li>
     <li>Install <a href="http://www.afterlogic.org/docs/webmail-lite/installation/install-on-cpanel" target="_blank">AfterLogic WebMail Lite</a></li>
     <li>Install <a href="http://configserver.com/cp/cse.html" target="_blank">ConfigServer Explorer</a></li>
@@ -56,7 +56,7 @@ chmod +x cpsetup
     <li>Update PHP Settings</li>
     <li>Update Apache Global Configuration</li>
 </ul>
-<h4>Depreciated (but still available) Features/Functions:</h4>
+<h4>Deprecated (but still available) Features/Functions:</h4>
 <ul>
     <li>Install <a href="https://www.ndchost.com/cpanel-whm/addons/accountdnscheck/" target="_blank">Account DNS Check</a>* (depreciated)</li>
     <li>Install <a href="http://how2.be/en/community/phpinimgr/" target="_blank">PHP.ini Manager</a>* (depreciated)</li>
