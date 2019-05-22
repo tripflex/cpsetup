@@ -212,7 +212,7 @@ function installCXS(){
 }
 
 function installClamAV(){
-	/scripts/ensurerpm ${verbose} gmp gmp-devel bzip2-devel
+	/scripts/ensurerpm ${verbose} gmp gmp-devel bzip2-devel libjson-c-dev libcurl-devel
 	useradd clamav
 	groupadd clamav
 	mkdir /usr/local/share/clamav
@@ -686,6 +686,14 @@ function configureMemCachedRailGunSockets(){
 	chmod 770 /var/run/memcached/memcached.sock
 	headerBlock "Adding RailGun user to memcached group"
 	usermod -a -G memcached railgun
+}
+
+function installJetBackup(){
+	headerBlock "Installing Jet Backup, please wait..."
+	yum install http://repo.jetlicense.com/centOS/jetapps-repo-latest.rpm
+	yum clean all --enablerepo=jetapps*
+	yum install jetapps-cpanel --disablerepo=* --enablerepo=jetapps
+	jetapps --install jetbackup stable
 }
 
 function installAfterLogicWebmailLite(){

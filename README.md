@@ -206,7 +206,20 @@ Use at your own risk, if you don't know what you're doing you should probably no
 
 # Change Log
 
-## [1.4.0](https://github.com/tripflex/cpsetup/tree/1.4.0) (2017-02-01)
+## [1.5.0](https://github.com/tripflex/cpsetup/tree/1.5.0) (May 22, 2019)
+[Full Changelog](https://github.com/tripflex/cpsetup/compare/1.4.0...1.5.0)
+
+**Implemented enhancements:**
+- Added `installJetBackup` function (not called by default)
+- Updated ClamAV version to 0.101.2
+- Updated ClamAV install from source now uses init for CentOS 7+
+- Added libjson-c-dev libcurl-devel for clamsubmit support
+
+**Bug Fixes:**
+- Fixed/Updated URL to download ConfigServer Firewall install file
+- Fixed incorrect function call for MySQL Tuner install
+
+## [1.4.0](https://github.com/tripflex/cpsetup/tree/1.4.0) (Feb 1, 2017)
 [Full Changelog](https://github.com/tripflex/cpsetup/compare/1.3.3...1.4.0)
 
 **Implemented enhancements:**
