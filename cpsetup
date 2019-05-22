@@ -218,7 +218,7 @@ function installClamAV(){
 	mkdir /usr/local/share/clamav
 	chown clamav:clamav /usr/local/share/clamav
 	cd ~
-	wget --no-check-certificate https://github.com/Cisco-Talos/clamav-devel/archive/clamav-0.101.2.zip
+	wget --no-check-certificate https://github.com/Cisco-Talos/clamav-devel/archive/clamav-0.101.2.tar.gz
 	tar -xzf clamav-*
 	rm -rf clamav-*.tar.gz
 	cd clamav*
