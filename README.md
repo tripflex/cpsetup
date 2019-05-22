@@ -214,10 +214,12 @@ Use at your own risk, if you don't know what you're doing you should probably no
 - Updated ClamAV version to 0.101.2
 - Updated ClamAV install from source now uses init for CentOS 7+
 - Added libjson-c-dev libcurl-devel for clamsubmit support
+- Added version output in header display
 
 **Bug Fixes:**
-- Fixed/Updated URL to download ConfigServer Firewall install file
-- Fixed incorrect function call for MySQL Tuner install
+- Removed never implemented `-m` and `--menu` args
+- Check for `-R` or `--functions` at start of script execution
+- Updated Y/N check to y/N to signify N as default when nothing entered
 
 ## [1.4.0](https://github.com/tripflex/cpsetup/tree/1.4.0) (Feb 1, 2017)
 [Full Changelog](https://github.com/tripflex/cpsetup/compare/1.3.3...1.4.0)

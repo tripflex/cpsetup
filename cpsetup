@@ -14,7 +14,7 @@ a8"     "" 88P'    "8a   `"""""8b, a8P_____88   88    88       88 88P'    "8a
            88                                                     88
            88                                                     88
 EOT
-echo -n "${YELLOW}"
+echo -e "${BLUE}                       Version ${version}${YELLOW}"
 	cat <<"EOT"
 			 _                  __  __       _
 			| |__  _   _    ___|  \/  |_   _| |       ___  ___
@@ -34,7 +34,7 @@ echo -n "${NORMAL}"
 # ------------------------------------------------------------------------------
 # @usage ./cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)]
 # ------------------------------------------------------------------------------
-# @copyright Copyright (C) 2017 Myles McNamara
+# @copyright Copyright (C) 2019 Myles McNamara
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -56,13 +56,12 @@ echo -n "${NORMAL}"
 function help(){
     echo "cpsetup - sMyles cPanel setup script v${version}";
     echo "Usage example:";
-    echo "cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)] [(-m|--menu)] [(-r|--run) value] [(-R|--functions)]";
+    echo "cpsetup [(-h|--help)] [(-v|--verbose)] [(-V|--version)] [(-u|--unattended)] [(-r|--run) value] [(-R|--functions)]";
     echo "Options:";
     echo "-h or --help: Displays this information.";
     echo "-v or --verbose: Verbose mode on.";
     echo "-V or --version: Displays the current version number.";
     echo "-u or --unattended: Unattended installation ( bypasses all prompts ).";
-    echo "-m or --menu: Show interactive UI menu.";
     echo "-r or --run: Run a specific function.";
     echo "-R or --functions: Show available functions to use with -r or --run command.";
     exit 1;
@@ -71,9 +70,7 @@ function help(){
 # Declare vars. Flags initalizing to 0.
 verbose="--quiet";
 yumargs="";
-version=0;
 unattended=0;
-menu=0;
 builddir=~/cpsetupbuild/
 sshport=222;
 rootemail="your@email.com";
@@ -83,15 +80,22 @@ cloudflare_company_name="YOUR CLOUDFLARE HOSTING COMPANY NAME HERE";
 railgun_token="YOUR_TOKEN_HERE";
 railgun_host="YOUR_PUBLIC_IP_OR_HOSTNAME";
 
+# Debugging on OSX (due to getopt issues), so i define brew location for getopt in env variable
+if [[ -z "${SMYLES_GETOPT}" ]]; then
+	# ENV variable not set, so use default getopt
+	GETOPT_CMD="getopt"
+else
+	GETOPT_CMD="${SMYLES_GETOPT}"
+fi
+
 # Execute getopt
-ARGS=$(getopt -o "hvVumr:R" -l "help,verbose,version,unattended,menu,run:,functions" -n "cpsetup" -- "$@");
+ARGS=$("$GETOPT_CMD" -o "hvVur:R" -l "help,verbose,version,unattended,run:,functions" -n "cpsetup" -- "$@");
 
 #Bad arguments
 if [ $? -ne 0 ];
 then
     help;
 fi
-
 eval set -- "$ARGS";
 
 while true; do
@@ -114,10 +118,6 @@ while true; do
                     unattended="1";
                     yumargs="-y";
             ;;
-        -m|--menu)
-            shift;
-                    menu="1";
-            ;;
         -r|--run)
             shift;
                     if [ -n "$1" ];
@@ -129,7 +129,7 @@ while true; do
             ;;
         -R|--functions)
             shift;
-            	functions="1";
+            	functions=1;
             ;;
 
         --)
@@ -174,7 +174,7 @@ function lineBreak {
 }
 
 function givemeayes {
-	echo -n "$1 (Y/N)"
+	echo -n "$1 (y/N)"
 	read answer
 	    case "$answer" in
 	    Y|y|yes|YES|Yes) return 0 ;;
@@ -763,6 +763,14 @@ cpanel_installed=$(/usr/local/cpanel/cpanel -V 2>/dev/null)
 clear
 cpSetup_banner
 echo -e "\n";
+if (($functions > 0 )); then
+	echo -e "${RED}Here's a list of available functions to call when using the -r or --run command:${NORMAL}"
+	echo -e "\n";
+	compgen -A function | egrep -vw 'givemeayes|help|headerBlock|lineBreak|stepcheck|promptForSSHPort|promptForRootForwardEmail|cpSetup_banner';
+	echo -e "\n";
+	exit;
+fi
+
 if [ -z "$cpanel_installed" ]; then
 	echo -e "${WHITEBG}${RED}${BRIGHT}${BLINK}Whoa Nelly!${NORMAL}${WHITEBG}${BLACK}It looks like cPanel is not installed on this server!${NORMAL}"
 	if givemeayes "${RED}Would you like to install cPanel before running this script?${NORMAL}"; then
@@ -776,14 +784,6 @@ if [ -z "$cpanel_installed" ]; then
 			exit;
 		fi
 	fi
-fi
-
-if (($functions > 0)); then
-	echo -e "${RED}Here's a list of available functions to call when using the -r or --run command:${NORMAL}"
-	echo -e "\n";
-	compgen -A function | egrep -vw 'givemeayes|help|headerBlock|lineBreak|stepcheck|promptForSSHPort|promptForRootForwardEmail|cpSetup_banner';
-	echo -e "\n";
-	exit;
 fi
 
 echo -e "${WHITEBG}${RED}${BRIGHT}${BLINK}Heads Up!${NORMAL}${WHITEBG}${BLACK}A couple things you should know about this script:${NORMAL}"
