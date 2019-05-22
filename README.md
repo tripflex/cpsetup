@@ -205,8 +205,8 @@ Use at your own risk, if you don't know what you're doing you should probably no
 
 # Change Log
 
-## [1.5.0](https://github.com/tripflex/cpsetup/tree/1.5.0) (May 22, 2019)
-[Full Changelog](https://github.com/tripflex/cpsetup/compare/1.4.0...1.5.0)
+## [1.5.0](https://github.com/tripflex/cpsetup/tree/v1.5.0) (May 22, 2019)
+[Full Changelog](https://github.com/tripflex/cpsetup/compare/v1.4.0...v1.5.0)
 
 **Implemented enhancements:**
 - Replace `disable_functions` in all `/opt/cpanel/ea-phpXX/root/etc/php.ini` where `XX` is PHP version
@@ -223,8 +223,8 @@ Use at your own risk, if you don't know what you're doing you should probably no
 - Check for `-R` or `--functions` at start of script execution
 - Updated Y/N check to y/N to signify N as default when nothing entered
 
-## [1.4.0](https://github.com/tripflex/cpsetup/tree/1.4.0) (Feb 1, 2017)
-[Full Changelog](https://github.com/tripflex/cpsetup/compare/1.3.3...1.4.0)
+## [1.4.0](https://github.com/tripflex/cpsetup/tree/v1.4.0) (Feb 1, 2017)
+[Full Changelog](https://github.com/tripflex/cpsetup/compare/v1.3.3...v1.4.0)
 
 **Implemented enhancements:**
 
