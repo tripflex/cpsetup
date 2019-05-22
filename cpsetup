@@ -577,8 +577,15 @@ function configureMySQL(){
 }
 
 function configurePHP(){
+	# Example ea-phpXX file location
+	# /opt/cpanel/ea-php72/root/etc/php.ini
+	EA_PHP_FILES=( /opt/cpanel/ea-php*/root/etc/php.ini )
+	# Replace is default /usr/local/lib/php.ini files
 	sed -i -e 's/enable_dl = On/enable_dl = Off/g' /usr/local/lib/php.ini
-	sed -i -e 's/disable_functions =/disable_functions = show_source, system, shell_exec, passthru, exec, phpinfo, popen, proc_open, allow_url_fopen, ini_set/g' /usr/local/lib/php.ini
+	sed -i -e 's/disable_functions =.*/disable_functions = show_source, system, shell_exec, passthru, exec, phpinfo, popen, proc_open, allow_url_fopen, ini_set/g' /usr/local/lib/php.ini
+	# Replace in any /opt/cpanel/ea-phpXX/root/etc/php.ini files
+	sed -i -e 's/enable_dl = On/enable_dl = Off/g' "${EA_PHP_FILES[@]}"
+	sed -i -e 's/disable_functions =.*/disable_functions = show_source, system, shell_exec, passthru, exec, phpinfo, popen, proc_open, allow_url_fopen, ini_set/g' "${EA_PHP_FILES[@]}"
 }
 
 function promptForSSHPort(){

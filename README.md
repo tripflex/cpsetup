@@ -99,7 +99,6 @@ Options:
 -v or --verbose: Verbose mode on.
 -V or --version: Displays the current version number.
 -u or --unattended: Unattended installation ( bypasses all prompts ).
--m or --menu: Show interactive UI menu (NOT yet implimented)
 -r or --run: Run a specific function.
 -R or --functions: Show available functions to use with -r or --run command.
 ```
@@ -210,6 +209,8 @@ Use at your own risk, if you don't know what you're doing you should probably no
 [Full Changelog](https://github.com/tripflex/cpsetup/compare/1.4.0...1.5.0)
 
 **Implemented enhancements:**
+- Replace `disable_functions` in all `/opt/cpanel/ea-phpXX/root/etc/php.ini` where `XX` is PHP version
+- Replace `enable_dl` in all `/opt/cpanel/ea-phpXX/root/etc/php.ini` where `XX` is PHP version
 - Added `installJetBackup` function (not called by default)
 - Updated ClamAV version to 0.101.2
 - Updated ClamAV install from source now uses init for CentOS 7+
@@ -217,6 +218,7 @@ Use at your own risk, if you don't know what you're doing you should probably no
 - Added version output in header display
 
 **Bug Fixes:**
+- Fixed PHP replacement for `disable_functions` not replacing entire line if functions already defined
 - Removed never implemented `-m` and `--menu` args
 - Check for `-R` or `--functions` at start of script execution
 - Updated Y/N check to y/N to signify N as default when nothing entered
